@@ -1,0 +1,24 @@
+<p-sidebar position="right" [blockScroll]="true" [dismissible]="false" [showCloseIcon]="false" [closeOnEscape]="false"
+    [visible]="(showOverlay | async) ?? false" styleClass="p-sidebar-lg">
+    <div class="p-component">
+        <h1>Hello.<br />You have to introduce yourself first</h1>
+    </div>
+    <div class="p-component fl-sidebar-content">
+        <p-tabView [(activeIndex)]="activeIndex">
+            <p-tabPanel header="Sign in">
+                <p-message text="Invalid username or password" severity="error" styleClass="fl-error-message-wide mb-1"
+                    *ngIf="showInvalidUsernameOrPasswordMessage"></p-message>
+                <p-message text="Profile was created, but authentication wasn't succesfull. Try authenticating againg"
+                    severity="error" styleClass="fl-error-message-wide mb-1"
+                    *ngIf="showAuthFailedAfterProfileCreationMessage"></p-message>
+                <app-sign-in-form (signin-submit)="onLogin($event)"></app-sign-in-form>
+            </p-tabPanel>
+            <p-tabPanel header="Sign up">
+                <p-message text="User profile creation failed" severity="error" styleClass="fl-error-message-wide mb-1"
+                    *ngIf="showProfileCreationFailedMessage">
+                </p-message>
+                <app-sign-up-form (signup-submit)="onSignupSubmit($event)"></app-sign-up-form>
+            </p-tabPanel>
+        </p-tabView>
+    </div>
+</p-sidebar>

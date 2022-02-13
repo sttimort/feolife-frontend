@@ -1,0 +1,44 @@
+<form [formGroup]="signupForm" (submit)="onSubmit()">
+    <p-fieldset legend="Login data">
+        <span class="p-float-label">
+            <input id="username" type="text" pInputText formControlName="username">
+            <label for="username">Username</label>
+        </span>
+        <small class="p-error" *ngIf="showInvalidMessage(usernameFormControl)">
+            {{getErrorMessage(usernameFormControl, 'Username')}}
+        </small>
+        <span class="p-float-label mt-3">
+            <input id="password" type="password" pInputText formControlName="password">
+            <label for="password">Password</label>
+        </span>
+        <small class="p-error" *ngIf="showInvalidMessage(passwordFormControl)">
+            {{getErrorMessage(passwordFormControl, 'Password')}}
+        </small>
+    </p-fieldset>
+    <p-fieldset legend="Profile data" styleClass="mt-2">
+        <span class="p-float-label">
+            <input id="first-name" type="text" pInputText formControlName="firstname">
+            <label for="first-name">Firstname</label>
+        </span>
+        <small class="p-error" *ngIf="showInvalidMessage(firstnameFormControl)">
+            {{getErrorMessage(firstnameFormControl, 'Firstname')}}
+        </small>
+        <span class="p-float-label mt-3">
+            <input id="last-name" type="text" pInputText formControlName="lastname">
+            <label for="last-name">Lastname</label>
+        </span>
+        <small class="p-error" *ngIf="showInvalidMessage(lastnameFormControl)">
+            {{getErrorMessage(lastnameFormControl, 'Lastname')}}
+        </small>
+        <span class="p-float-label mt-3">
+            <input id="middle-name" type="text" pInputText formControlName="middlename">
+            <label for="middle-name">Middlename</label>
+        </span>
+        <small class="p-error" *ngIf="showInvalidMessage(middlenameFormControl)">
+            {{getErrorMessage(middlenameFormControl, 'Middlename')}}
+        </small>
+    </p-fieldset>
+    <div class="mt-2">
+        <p-button label="Sign up" type="submit" styleClass="fl-button-wide" [disabled]="signupForm.invalid"></p-button>
+    </div>
+</form>

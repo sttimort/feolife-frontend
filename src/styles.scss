@@ -1,1 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
+body {
+    padding: 2rem;
+}
+
+.p-tabview-nav {
+    justify-content: space-around;
+}
+
+.mt-1 {
+    margin-top: 0.5rem;
+}
+
+.mt-2 {
+    margin-top: 1rem;
+}
+
+.mt-3 {
+    margin-top: 1.5rem;
+}
+
+.ml-1 {
+    margin-left: 1rem;
+}
+
+.mb-1 {
+    margin-bottom: 1em !important;
+}
+
+.fl-button-wide {
+    width: 100%;
+    max-width: 25rem;
+}
+
+.p-inline-message.fl-error-message-wide {
+    width: 100%;
+    justify-content: start;
+}
