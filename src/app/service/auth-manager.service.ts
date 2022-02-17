@@ -3,7 +3,7 @@ import { Store } from '@ngrx/store';
 import { catchError, map, merge, mergeMap, Observable } from 'rxjs';
 import { clearAuthToken, setAuthenticated, setAuthToken, setUnauthenticated } from '../store/actions';
 import { AuthTokenStorageService } from './auth-token-storage.service';
-import { CreateUserProfileRequest, FeolifeApiClient } from './feolife-api-client';
+import { CreateUserProfileRequest, FeolifeApiClient, FeolifeApiError, FeolifeApiErrorReason } from './feolife-api-client';
 import { UserProfileManager } from './user-profile-manager.service';
 
 @Injectable({
@@ -42,7 +42,14 @@ export class AuthManagerService {
           this.store.dispatch(setAuthToken({ authToken: token }));
         }),
         map(() => { this.userProfileManager.fetchUserProfileInfo().subscribe() }),
-        catchError((error, _) => { throw new AuthenticationFailedError(error) }),
+        catchError((error, _) => { 
+          let reason = AuthenticationFailureReason.UNKNOWN;
+          if ((error as FeolifeApiError)?.reason == FeolifeApiErrorReason.API_UNAUTHENTICATED) {
+            reason = AuthenticationFailureReason.IVALID_CREDENTIALS;
+          }
+
+          throw new AuthenticationFailedError(reason, error);
+        }),
       );
   }
 
@@ -72,7 +79,14 @@ export class AuthManagerService {
 }
 
 export class AuthenticationFailedError {
-  constructor(public cause: any) { }
+  constructor(
+    public reason: AuthenticationFailureReason,
+    public cause: any,
+  ) { }
+}
+
+export enum AuthenticationFailureReason {
+  IVALID_CREDENTIALS, UNKNOWN
 }
 
 export class UserProfileCreationError { }

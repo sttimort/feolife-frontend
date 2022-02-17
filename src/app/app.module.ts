@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule } from '@angular/forms';
 import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 
@@ -26,6 +27,9 @@ import { AvatarModule } from 'primeng/avatar';
 import { MenubarModule } from 'primeng/menubar';
 import { TokenAuthInterceptor } from 'src/interceptor/token-auth-http-interceptor';
 import { MenuModule } from 'primeng/menu';
+import { FillUpsTookitComponent } from './components/fill-ups-tookit/fill-ups-tookit.component';
+import { DataViewModule } from 'primeng/dataview';
+import { InputNumberModule } from 'primeng/inputnumber';
 
 @NgModule({
   imports: [
@@ -33,6 +37,7 @@ import { MenuModule } from 'primeng/menu';
     BrowserAnimationsModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    FormsModule,
     HttpClientModule,
     StoreModule.forRoot({ state: feolifeReducer }),
 
@@ -47,12 +52,15 @@ import { MenuModule } from 'primeng/menu';
     AvatarModule,
     MenubarModule,
     MenuModule,
+    DataViewModule,
+    InputNumberModule,
   ],
   declarations: [
     AppComponent,
     SignInFormComponent,
     HelloSidebarComponent,
     SignUpFormComponent,
+    FillUpsTookitComponent,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenAuthInterceptor, multi: true }

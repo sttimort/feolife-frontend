@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { catchError, map, mergeMap, Observable } from 'rxjs';
-import { AuthManagerService } from 'src/app/service/auth-manager.service';
+import { AuthenticationFailedError, AuthenticationFailureReason, AuthManagerService } from 'src/app/service/auth-manager.service';
 import { State } from 'src/app/store/reducer';
 import { SignInFormSubmitEvent } from '../sign-in-form/sign-in-form.component';
 import { SignUpSubmitEvent } from '../sign-up-form/sign-up-form.component';
@@ -14,9 +14,9 @@ import { SignUpSubmitEvent } from '../sign-up-form/sign-up-form.component';
 export class HelloSidebarComponent implements OnInit {
   activeIndex: number = 0
   showOverlay: Observable<boolean>;
-  showInvalidUsernameOrPasswordMessage: boolean = false;
-  showProfileCreationFailedMessage: boolean = false;
-  showAuthFailedAfterProfileCreationMessage: boolean = false;
+
+  signInFormError: string | null = null;
+  signUpFormError: string | null = null;
 
   constructor(
     store: Store<{ state: State }>,
@@ -29,19 +29,24 @@ export class HelloSidebarComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  onLogin(event: SignInFormSubmitEvent) {
-    this.showInvalidUsernameOrPasswordMessage = false;
-    this.authManager.authenticate(event.username, event.password)
-      .pipe(catchError((err, _) => {
-        this.showInvalidUsernameOrPasswordMessage = true;
-        throw err;
+  onSignInFormSubmit(event: SignInFormSubmitEvent) {
+    this.clearSignInFormError();
+    this.authManager
+      .authenticate(event.username, event.password)
+      .pipe(catchError((error, _) => {
+        const errorReason = (error as AuthenticationFailedError)?.reason
+        if (errorReason == AuthenticationFailureReason.IVALID_CREDENTIALS) {
+          this.setSignInFormErrorMessageInvalidCredentials();
+        } else {
+          this.setSignInFormErrorMessageUnknownFailure();
+        }
+        throw error;
       }))
-      .subscribe(() => { this.showInvalidUsernameOrPasswordMessage = false; });
+      .subscribe();
   }
 
   onSignupSubmit(event: SignUpSubmitEvent) {
-    this.showProfileCreationFailedMessage = false;
-    this.showAuthFailedAfterProfileCreationMessage = false;
+    this.clearSignUpFormError();
     this.authManager
       .createUserProfile({
         username: event.username,
@@ -52,18 +57,42 @@ export class HelloSidebarComponent implements OnInit {
       })
       .pipe(
         catchError((error, _) => {
-          this.showProfileCreationFailedMessage = true;
+          this.setSignUpFormErrorMessageProfileCreationFailure();
           throw error;
         }),
         mergeMap(() => this.authManager
           .authenticate(event.username, event.password)
           .pipe(catchError((error, _) => {
-            this.showAuthFailedAfterProfileCreationMessage = true;
+            this.setSignInFormErrorMessageFailureAfterProfileCreation();
             this.activeIndex = 0;
             throw error;
           })),
         )
       )
       .subscribe();
+  }
+
+  private clearSignInFormError() {
+    this.signInFormError = null;
+  }
+
+  private clearSignUpFormError() {
+    this.signInFormError = null;
+  }
+
+  private setSignInFormErrorMessageInvalidCredentials() {
+    this.signInFormError = "Неверное имя пользователя или пароль";
+  }
+
+  private setSignInFormErrorMessageUnknownFailure() {
+    this.signInFormError = "Не удалось авторизоваться";
+  }
+
+  private setSignInFormErrorMessageFailureAfterProfileCreation() {
+    this.signInFormError = "Не удалось авторизоваться после успешного создания профиля. Попробуйте авторизоваться заново";
+  }
+
+  private setSignUpFormErrorMessageProfileCreationFailure() {
+    this.signUpFormError = "Произошла ошибка при создании профиля"
   }
 }

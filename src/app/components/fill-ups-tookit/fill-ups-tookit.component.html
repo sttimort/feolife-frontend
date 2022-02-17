@@ -1,0 +1,66 @@
+<div class="grid m-all-2">
+    <div class="md:col-6 col-12">
+        <p-card>
+            <ng-template pTemplate="header">
+                <form [formGroup]="searchForm" class="p-2" (submit)="onSearchFormSumit()">
+                    <div class="p-inputgroup">
+                        <input id="citizens-search" type="text" placeholder="Кому пополнять счет?" pInputText
+                            formControlName="query">
+                        <button pButton pRipple type="submit" icon="pi pi-search" class="p-button"
+                            [disabled]="searchForm.invalid"></button>
+                    </div>
+                </form>
+            </ng-template>
+            <p-dataView [value]="searchResult" layout="list" emptyMessage="По указанному запросу граждан не найдено">
+                <ng-template let-userProfile pTemplate="listItem">
+                    <div class="col-12 flex justify-content-between">
+                        <p class="ml-2 font-bold">
+                            {{userProfile.lastName}} {{userProfile.firstName}} {{userProfile.middleName ?? ''}}
+                        </p>
+                        <div class="flex align-items-center">
+                            <p-button label="Выбрать" (onClick)="onSelectUserProfile(userProfile)"></p-button>
+                        </div>
+                    </div>
+                </ng-template>
+            </p-dataView>
+        </p-card>
+    </div>
+    <div class="md:col-6 col-12">
+        <p-card header="Пополнение счёта">
+            <p-fieldset legend="Информация о пополняемом счете">
+                <div class="field grid" *ngIf="billingAccountInfo != null">
+                    <label class="md:col-3 md:mb-0 col-12 mb-2 font-bold">Владелец</label>
+                    <div class="md:col-9 col-12">
+                        <p>{{billingAccountInfo.owner}}</p>
+                    </div>
+                </div>
+                <div class="field grid" *ngIf="billingAccountInfo != null">
+                    <label class="md:col-3 md:mb-0 col-12 mb-2 font-bold">UUID счёта</label>
+                    <div class="md:col-9 col-12">
+                        <p>{{billingAccountInfo.uuid}}</p>
+                    </div>
+                </div>
+                <p-message severity="warn"
+                    text="Не выбран счет для пополнения. Для выбора счета выполните поиск по гражданам в панеле поиска"
+                    *ngIf="billingAccountInfo == null">
+                </p-message>
+            </p-fieldset>
+            <div class="field grid m-2 mt-4">
+                <label for="fill-up-amount" class="md:col-3 md:mb-0 col-12 mb-2 font-bold">Сумма пополнения</label>
+                <div class="md:col-9 col-12">
+                    <p-inputNumber id="fill-up-amount" [(ngModel)]="amount" [showButtons]="true" inputId="stacked"
+                        mode="currency" currency="RUB" [step]="10" decrementButtonClass="p-button-danger"
+                        incrementButtonClass="p-button-warning" [min]="0.01" [max]="100_000">
+                    </p-inputNumber>
+                </div>
+            </div>
+            <ng-template pTemplate="footer">
+                <div class="flex flex-row-reverse">
+                    <p-button label="Пополнить выбранный счет" icon="pi pi-plus-circle" styleClass="p-button-success"
+                        [disabled]="billingAccountInfo == null" (onClick)="onFillUp()">
+                    </p-button>
+                </div>
+            </ng-template>
+        </p-card>
+    </div>
+</div>

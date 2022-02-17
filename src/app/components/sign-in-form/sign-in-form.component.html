@@ -1,7 +1,7 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
     <span class="p-float-label mt-1">
         <input id="username" type="text" pInputText formControlName="username">
-        <label for="username">Username</label>
+        <label for="username">Имя пользователя</label>
     </span>
     <small class="p-error" *ngIf="showUsernameInvalidMessage()">{{getUsernameErrorMessage()}}</small>
     <span class="p-float-label mt-3">
