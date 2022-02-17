@@ -9,7 +9,7 @@
         </small>
         <span class="p-float-label mt-3">
             <input id="password" type="password" pInputText formControlName="password">
-            <label for="password">Password</label>
+            <label for="password">Пароль</label>
         </span>
         <small class="p-error" *ngIf="showInvalidMessage(passwordFormControl)">
             {{getErrorMessage(passwordFormControl, 'Password')}}
@@ -18,21 +18,21 @@
     <p-fieldset legend="Profile data" styleClass="mt-2">
         <span class="p-float-label">
             <input id="first-name" type="text" pInputText formControlName="firstname">
-            <label for="first-name">Firstname</label>
+            <label for="first-name">Имя</label>
         </span>
         <small class="p-error" *ngIf="showInvalidMessage(firstnameFormControl)">
             {{getErrorMessage(firstnameFormControl, 'Firstname')}}
         </small>
         <span class="p-float-label mt-3">
             <input id="last-name" type="text" pInputText formControlName="lastname">
-            <label for="last-name">Lastname</label>
+            <label for="last-name">Фамилия</label>
         </span>
         <small class="p-error" *ngIf="showInvalidMessage(lastnameFormControl)">
             {{getErrorMessage(lastnameFormControl, 'Lastname')}}
         </small>
         <span class="p-float-label mt-3">
             <input id="middle-name" type="text" pInputText formControlName="middlename">
-            <label for="middle-name">Middlename</label>
+            <label for="middle-name">Отчество</label>
         </span>
         <small class="p-error" *ngIf="showInvalidMessage(middlenameFormControl)">
             {{getErrorMessage(middlenameFormControl, 'Middlename')}}
