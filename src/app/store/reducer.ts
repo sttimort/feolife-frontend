@@ -1,21 +1,11 @@
 import { Action, createReducer, on } from "@ngrx/store";
+// import { State } from "./state";
 import * as FeolifeAcions from "./actions";
+import { State } from "./state";
 
-export interface State {
-    isAuthenticated: boolean | null,
-    authToken: string | null,
-    profile: UserProfile | null,
-}
-
-export interface UserProfile {
-    username: string,
-    firstName: string,
-    lastName: string,
-    middleName: string | null,
-}
-
-export const initialState: State = {
+const initialState: State = {
     isAuthenticated: null,
+    initialAuthServerFailure: null,
     authToken: null,
     profile: null,
 }
@@ -27,6 +17,18 @@ const _feolifeReducer = createReducer(
     on(FeolifeAcions.setAuthToken, (state, { authToken }) => ({ ...state, authToken: authToken })),
     on(FeolifeAcions.clearAuthToken, state => ({ ...state, authToken: null })),
     on(FeolifeAcions.setProfile, (state, { userProfile }) => ({ ...state, profile: userProfile })),
+    on(FeolifeAcions.startInitialAuthCheck, state => ({
+        ...state,
+        isAuthenticated: null,
+        authToken: null,
+        initialAuthServerFailure: null,
+    })),
+    on(FeolifeAcions.initialAuthServerFailure, state => ({
+        ...state,
+        isAuthenticated: null,
+        authToken: null,
+        initialAuthServerFailure: true,
+    })),
 )
 
 export function feolifeReducer(state: State | undefined, action: Action) {

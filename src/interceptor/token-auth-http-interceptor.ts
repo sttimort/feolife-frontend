@@ -2,7 +2,7 @@ import { HttpEvent, HttpHandler, HttpInterceptor, HttpRequest } from "@angular/c
 import { Injectable } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { first, mergeMap, Observable } from "rxjs";
-import { State } from "src/app/store/reducer";
+import { State } from "src/app/store/state";
 
 @Injectable()
 export class TokenAuthInterceptor implements HttpInterceptor {

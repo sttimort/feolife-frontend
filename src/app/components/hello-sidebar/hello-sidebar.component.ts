@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { catchError, map, mergeMap, Observable } from 'rxjs';
 import { AuthenticationFailedError, AuthenticationFailureReason, AuthManagerService } from 'src/app/service/auth-manager.service';
-import { State } from 'src/app/store/reducer';
+import { State } from 'src/app/store/state';
 import { SignInFormSubmitEvent } from '../sign-in-form/sign-in-form.component';
 import { SignUpSubmitEvent } from '../sign-up-form/sign-up-form.component';
 
@@ -23,7 +23,7 @@ export class HelloSidebarComponent implements OnInit {
 
     private authManager: AuthManagerService,
   ) {
-    this.showOverlay = store.select(it => it.state.isAuthenticated).pipe(map((it) => it === false))
+    this.showOverlay = store.select(it => it.state.initialAuthServerFailure != true && it.state.isAuthenticated === false)
   }
 
   ngOnInit(): void {

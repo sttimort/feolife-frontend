@@ -2,8 +2,7 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http
 import { Injectable } from "@angular/core";
 import { catchError, concatMap, map, merge, Observable, of } from "rxjs";
 import { environment } from "src/environments/environment";
-import { UserProfile } from "../store/reducer";
-import { Nothing } from "../utils/utils";
+import { UserProfile } from "../store/state";
 
 export interface CreateUserProfileRequest {
     username: string,
@@ -62,9 +61,9 @@ export class FeolifeApiClient {
             );
     }
 
-    public checkToken(token: string): Observable<Nothing> {
+    public checkToken(token: string): Observable<void> {
         return this.httpClient
-            .get<any>(
+            .get<void>(
                 `${environment.apiUrl}/user-profile`,
                 {
                     headers: { Authorization: `Bearer ${token}` }

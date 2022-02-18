@@ -1,6 +1,7 @@
+import { NgSwitchDefault } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
-import { catchError, map, merge, mergeMap, Observable } from 'rxjs';
+import { catchError, filter, iif, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { clearAuthToken, setAuthenticated, setAuthToken, setUnauthenticated } from '../store/actions';
 import { AuthTokenStorageService } from './auth-token-storage.service';
 import { CreateUserProfileRequest, FeolifeApiClient, FeolifeApiError, FeolifeApiErrorReason } from './feolife-api-client';
@@ -18,18 +19,35 @@ export class AuthManagerService {
     private store: Store
   ) { }
 
-  public checkInitialAuthentication() {
-    let authToken = this.authTokenStorageService.get()
-    if (authToken == null) {
-      this.store.dispatch(setUnauthenticated())
-      this.store.dispatch(clearAuthToken())
-    } else {
-      this.checkAuthenticated(authToken)
-        .subscribe(() => {
-          this.store.dispatch(setAuthToken({ authToken: authToken!! }));
-          this.userProfileManager.fetchUserProfileInfo().subscribe();
-        })
-    }
+  public checkInitialAuthentication(): Observable<void> {
+    return of(this.authTokenStorageService.get()).pipe(
+      filter((token, _: number) => {
+        if (token == null) {
+          this.store.dispatch(setUnauthenticated())
+          this.store.dispatch(clearAuthToken())
+        }
+        return token != null;
+      }),
+      mergeMap(token => {
+        return this.checkAuthenticated(token!!).pipe(
+          map((it) => {
+            console.log('it is ', it)
+            this.store.dispatch(setAuthToken({ authToken: token!! }));
+            this.userProfileManager.fetchUserProfileInfo().subscribe();
+          })
+        )
+      }),
+    )
+    // if (authToken == null) {
+    //   this.store.dispatch(setUnauthenticated())
+    //   this.store.dispatch(clearAuthToken())
+    // } else {
+    //   this.checkAuthenticated(authToken)
+    //     .subscribe(() => {
+    //       this.store.dispatch(setAuthToken({ authToken: authToken!! }));
+    //       this.userProfileManager.fetchUserProfileInfo().subscribe();
+    //     })
+    // }
   }
 
   public authenticate(username: string, password: string): Observable<void> {
@@ -42,7 +60,7 @@ export class AuthManagerService {
           this.store.dispatch(setAuthToken({ authToken: token }));
         }),
         map(() => { this.userProfileManager.fetchUserProfileInfo().subscribe() }),
-        catchError((error, _) => { 
+        catchError((error, _) => {
           let reason = AuthenticationFailureReason.UNKNOWN;
           if ((error as FeolifeApiError)?.reason == FeolifeApiErrorReason.API_UNAUTHENTICATED) {
             reason = AuthenticationFailureReason.IVALID_CREDENTIALS;
@@ -71,7 +89,11 @@ export class AuthManagerService {
       .pipe(
         map(() => { this.store.dispatch(setAuthenticated()) }),
         catchError((error, _) => {
-          this.store.dispatch(setUnauthenticated())
+          const reason = (error as FeolifeApiError)?.reason
+          if (reason == FeolifeApiErrorReason.API_UNAUTHENTICATED) {
+            this.store.dispatch(setUnauthenticated())
+            this.store.dispatch(clearAuthToken())
+          }
           throw error;
         })
       );

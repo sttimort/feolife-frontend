@@ -5,11 +5,11 @@
     <div class="p-component fl-sidebar-content">
         <p-tabView [(activeIndex)]="activeIndex">
             <p-tabPanel header="Войти">
-                <p-message [text]="signInFormError" severity="error" styleClass="fl-error-message-wide mb-1" *ngIf="signInFormError != null"></p-message>
+                <p-message [text]="signInFormError" severity="error" styleClass="fl-error-message-wide mb-4" *ngIf="signInFormError != null"></p-message>
                 <app-sign-in-form (signin-submit)="onSignInFormSubmit($event)"></app-sign-in-form>
             </p-tabPanel>
             <p-tabPanel header="Зарегистрироваться">
-                <p-message [text]="signUpFormError" severity="error" styleClass="fl-error-message-wide mb-1" *ngIf="signUpFormError != null">
+                <p-message [text]="signUpFormError" severity="error" styleClass="fl-error-message-wide mb-2" *ngIf="signUpFormError != null">
                 </p-message>
                 <app-sign-up-form (signup-submit)="onSignupSubmit($event)"></app-sign-up-form>
             </p-tabPanel>

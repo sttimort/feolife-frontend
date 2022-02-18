@@ -1,15 +1,15 @@
 <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-    <span class="p-float-label mt-1">
+    <span class="p-float-label mt-3">
         <input id="username" type="text" pInputText formControlName="username">
         <label for="username">Имя пользователя</label>
     </span>
     <small class="p-error" *ngIf="showUsernameInvalidMessage()">{{getUsernameErrorMessage()}}</small>
-    <span class="p-float-label mt-3">
+    <span class="p-float-label mt-5">
         <input id="password" type="password" pInputText formControlName="password">
         <label for="password">Пароль</label>
         <small class="p-error" *ngIf="showPasswordInvalidMessage()">{{getPasswordErrorMessage()}}</small>
     </span>
-    <div class="mt-2">
+    <div class="mt-4">
         <p-button label="Войти" type="submit" [disabled]="loginForm.invalid" styleClass="fl-button-wide"></p-button>
     </div>
 </form>

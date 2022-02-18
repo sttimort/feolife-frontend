@@ -1,9 +1,17 @@
 <div class="p-component" style="margin: 15rem 2rem 2rem;" *ngIf="showWelcomeBox | async">
     <h1 class="fl-app-title">ФеоЛайф</h1>
-    <h2 class="fl-app-subtitle p-text-secondary">Решения для жизни.<br/>Помещиков.</h2>
-    <div class="initial-spinner-container" *ngIf="showSpinner | async">
+    <h2 class="fl-app-subtitle p-text-secondary">Решения для жизни.<br />Помещиков.</h2>
+    <div class="initial-spinner-container" *ngIf="showSpinner">
         <p-progressSpinner [style]="{ width: '2rem', height: '2rem' }" styleClass="custom-spinner"></p-progressSpinner>
         <small class="p-text-secondary ml-1">Connecting to the server...</small>
+    </div>
+    <div class="flex justify-content-center" *ngIf="showServerUnreachable | async">
+        <p-message text="Не удалось связататься с сервером" severity="error" styleClass="fl-error-message-wide mb-4">
+        </p-message>
+        <div>
+            <button pButton pRipple type="button" icon="pi pi-refresh" class="p-button-text p-button-danger"
+                (click)="checkAuth()"></button>
+        </div>
     </div>
 </div>
 <app-hello-sidebar></app-hello-sidebar>

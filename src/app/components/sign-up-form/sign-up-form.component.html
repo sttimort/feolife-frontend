@@ -1,13 +1,13 @@
 <form [formGroup]="signupForm" (submit)="onSubmit()">
     <p-fieldset legend="Данные входа в учетную запись">
-        <span class="p-float-label">
+        <span class="p-float-label mt-2">
             <input id="username" type="text" pInputText formControlName="username">
             <label for="username">Имя пользователя</label>
         </span>
         <small class="p-error" *ngIf="showInvalidMessage(usernameFormControl)">
             {{getErrorMessage(usernameFormControl, 'Username')}}
         </small>
-        <span class="p-float-label mt-3">
+        <span class="p-float-label mt-4">
             <input id="password" type="password" pInputText formControlName="password">
             <label for="password">Пароль</label>
         </span>
@@ -16,21 +16,21 @@
         </small>
     </p-fieldset>
     <p-fieldset legend="Данные профиля" styleClass="mt-2">
-        <span class="p-float-label">
+        <span class="p-float-label mt-2">
             <input id="first-name" type="text" pInputText formControlName="firstname">
             <label for="first-name">Имя</label>
         </span>
         <small class="p-error" *ngIf="showInvalidMessage(firstnameFormControl)">
             {{getErrorMessage(firstnameFormControl, 'Firstname')}}
         </small>
-        <span class="p-float-label mt-3">
+        <span class="p-float-label mt-4">
             <input id="last-name" type="text" pInputText formControlName="lastname">
             <label for="last-name">Фамилия</label>
         </span>
         <small class="p-error" *ngIf="showInvalidMessage(lastnameFormControl)">
             {{getErrorMessage(lastnameFormControl, 'Lastname')}}
         </small>
-        <span class="p-float-label mt-3">
+        <span class="p-float-label mt-4">
             <input id="middle-name" type="text" pInputText formControlName="middlename">
             <label for="middle-name">Отчество</label>
         </span>
@@ -38,7 +38,7 @@
             {{getErrorMessage(middlenameFormControl, 'Middlename')}}
         </small>
     </p-fieldset>
-    <div class="mt-2">
+    <div class="mt-4">
         <p-button label="Создать профиль" type="submit" styleClass="fl-button-wide" [disabled]="signupForm.invalid"></p-button>
     </div>
 </form>
