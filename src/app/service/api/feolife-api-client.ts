@@ -2,7 +2,9 @@ import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http
 import { Injectable } from "@angular/core";
 import { catchError, concatMap, map, merge, Observable, of } from "rxjs";
 import { environment } from "src/environments/environment";
-import { UserProfile } from "../store/state";
+import { MyUserProfile, Permission } from "../../store/state";
+import { CreateRoleRequest } from "./model/requests";
+import { CitizenSearchResponse, GetRolePermissionsResponse, GetRolesResponse, TokenAuthResponse, UserProfileResponse } from "./model/responses";
 
 export interface CreateUserProfileRequest {
     username: string,
@@ -37,6 +39,16 @@ export interface ExtensibleBillingAccount {
     attributes: ResponseExtensionAttribute[],
 }
 
+export interface ResponseExtensionAttribute {
+    name: string,
+    value: any | null,
+}
+
+export interface Role {
+    name: string,
+    isAssignedOnUserProfileCreation: boolean,
+}
+
 @Injectable({
     providedIn: 'root'
 })
@@ -64,13 +76,29 @@ export class FeolifeApiClient {
     public checkToken(token: string): Observable<void> {
         return this.httpClient
             .get<void>(
-                `${environment.apiUrl}/user-profile`,
+                `${environment.apiUrl}/my-user-profile`,
                 {
                     headers: { Authorization: `Bearer ${token}` }
                 }
             )
             .pipe(catchError(this.handleApiError()));
 
+    }
+
+    public getMyUserProfile(): Observable<MyUserProfile> {
+        return this.httpClient
+            .get<UserProfileResponse>(`${environment.apiUrl}/my-user-profile`)
+            .pipe(
+                map(response => ({
+                    username: response.credentials[0].username,
+                    firstName: response.firstName,
+                    lastName: response.lastName,
+                    middleName: response.middleName,
+                    permissions: response.permissions
+                        .filter(it => (<any>Object).values(Permission).includes(it))
+                        .map(it => Permission[it as keyof typeof Permission]),
+                }))
+            );
     }
 
     public createUserProfile(request: CreateUserProfileRequest): Observable<void> {
@@ -82,18 +110,6 @@ export class FeolifeApiClient {
             .pipe(catchError(this.handleApiError()))
     }
 
-    public getUserProfileInfo(): Observable<UserProfile> {
-        return this.httpClient
-            .get<UserProfileResponse>(`${environment.apiUrl}/user-profile`)
-            .pipe(
-                map(response => ({
-                    username: response.credentials[0].username,
-                    firstName: response.firstName,
-                    lastName: response.lastName,
-                    middleName: response.middleName,
-                }))
-            );
-    }
 
     public citizensSearch(query: string): Observable<ExtensibleUserProfile[]> {
         return this.httpClient
@@ -112,11 +128,38 @@ export class FeolifeApiClient {
             .pipe(catchError(this.handleApiError()));
     }
 
-    public fillUpBillingAccount(billingAccountUuid: string, value: number ): Observable<void> {
+    public fillUpBillingAccount(billingAccountUuid: string, value: number): Observable<void> {
         return this.httpClient
             .post<void>(
                 `${environment.apiUrl}/billing-accounts/${billingAccountUuid}/fill-ups`,
                 { value: value },
+            )
+            .pipe(catchError(this.handleApiError()));
+    }
+
+    public getRoles(): Observable<Role[]> {
+        return this.httpClient
+            .get<GetRolesResponse>(`${environment.apiUrl}/roles`)
+            .pipe(
+                map(it => it.roles),
+                catchError(this.handleApiError()),
+            );
+    }
+
+    public getRolePermissions(roleName: string): Observable<Permission[]> {
+        return this.httpClient
+            .get<GetRolePermissionsResponse>(`${environment.apiUrl}/roles/${roleName}/permissions`)
+            .pipe(
+                map(it => it.permissions),
+                catchError(this.handleApiError()),
+            );
+    }
+
+    public createRole(request: CreateRoleRequest): Observable<void> {
+        return this.httpClient
+            .post<void>(
+                `${environment.apiUrl}/roles`,
+                request,
             )
             .pipe(catchError(this.handleApiError()));
     }
@@ -133,24 +176,4 @@ export class FeolifeApiClient {
             throw new FeolifeApiError(reason, error);
         };
     }
-}
-
-interface TokenAuthResponse {
-    accessToken: string,
-}
-
-interface UserProfileResponse {
-    firstName: string,
-    lastName: string,
-    middleName: string | null,
-    credentials: Array<{ username: string }>,
-}
-
-interface CitizenSearchResponse {
-    citizens: ExtensibleUserProfile[],
-}
-
-interface ResponseExtensionAttribute {
-    name: string,
-    value: any | null,
 }

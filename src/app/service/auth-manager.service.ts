@@ -1,23 +1,30 @@
-import { NgSwitchDefault } from '@angular/common';
 import { Injectable } from '@angular/core';
 import { Store } from '@ngrx/store';
 import { catchError, filter, iif, map, merge, mergeMap, Observable, of, switchMap } from 'rxjs';
 import { clearAuthToken, setAuthenticated, setAuthToken, setUnauthenticated } from '../store/actions';
 import { AuthTokenStorageService } from './auth-token-storage.service';
-import { CreateUserProfileRequest, FeolifeApiClient, FeolifeApiError, FeolifeApiErrorReason } from './feolife-api-client';
+import { CreateUserProfileRequest, FeolifeApiClient, FeolifeApiError, FeolifeApiErrorReason } from './api/feolife-api-client';
 import { UserProfileManager } from './user-profile-manager.service';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthManagerService {
 
+  private urlToRedirectToOnSuccessAuth: string | null = null;
+
   constructor(
+    private router: Router,
     private apiClient: FeolifeApiClient,
     private userProfileManager: UserProfileManager,
     private authTokenStorageService: AuthTokenStorageService,
     private store: Store
   ) { }
+
+  public onSuccessAuthRedirectTo(url: string) {
+    this.urlToRedirectToOnSuccessAuth = url;
+  }
 
   public checkInitialAuthentication(): Observable<void> {
     return of(this.authTokenStorageService.get()).pipe(
@@ -28,26 +35,17 @@ export class AuthManagerService {
         }
         return token != null;
       }),
-      mergeMap(token => {
-        return this.checkAuthenticated(token!!).pipe(
-          map((it) => {
-            console.log('it is ', it)
-            this.store.dispatch(setAuthToken({ authToken: token!! }));
-            this.userProfileManager.fetchUserProfileInfo().subscribe();
-          })
-        )
-      }),
+      map(token => token!!),
+      mergeMap(token => this.checkAuthenticated(token!!).pipe(map(() => token))),
+      map(token => this.store.dispatch(setAuthToken({ authToken: token }))),
+      mergeMap(() => this.userProfileManager.fetchUserProfileInfo()),
+      map(() => {
+        if (this.urlToRedirectToOnSuccessAuth != null) {
+          this.router.navigateByUrl(this.urlToRedirectToOnSuccessAuth);
+          this.urlToRedirectToOnSuccessAuth = null;
+        }
+      })
     )
-    // if (authToken == null) {
-    //   this.store.dispatch(setUnauthenticated())
-    //   this.store.dispatch(clearAuthToken())
-    // } else {
-    //   this.checkAuthenticated(authToken)
-    //     .subscribe(() => {
-    //       this.store.dispatch(setAuthToken({ authToken: authToken!! }));
-    //       this.userProfileManager.fetchUserProfileInfo().subscribe();
-    //     })
-    // }
   }
 
   public authenticate(username: string, password: string): Observable<void> {

@@ -17,17 +17,6 @@
 <app-hello-sidebar></app-hello-sidebar>
 
 <div *ngIf="!(showWelcomeBox | async)">
-    <div class="fl-app-menubar-container">
-        <p-menubar>
-            <ng-template pTemplate="start">
-                <button pButton pRipple type="button" label="FeoLife" class="p-button-text"></button>
-            </ng-template>
-            <ng-template pTemplate="end">
-                <button pButton pRipple type="button" icon="pi pi-user" [label]="(profileName | async) ?? ''"
-                    class="p-button-text" (click)="menu.toggle($event)"></button>
-                <p-menu #menu [popup]="true" [model]="menuItems"></p-menu>
-            </ng-template>
-        </p-menubar>
-    </div>
+    <app-main-menu-bar></app-main-menu-bar>
     <router-outlet></router-outlet>
 </div>

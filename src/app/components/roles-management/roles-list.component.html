@@ -1,0 +1,95 @@
+<div class="p-component p-4">
+    <h1>Управление ролями</h1>
+    <p-card header="Список ролей" [style]="{ 'max-width': '860px' }">
+        <p-dataView #rolesDataView [value]="(roles | async) ?? []" filterBy="name" emptyMessage="Нет ролей">
+            <ng-template pTemplate="header">
+                <div class="flex justify-content-between flex-wrap">
+                    <span class="p-input-icon-left mb-2 md:mb-0">
+                        <i class="pi pi-search"></i>
+                        <input type="text" placeholder="Поиск по имени" pInputText (input)="onRolesSearchInput($event)">
+                    </span>
+                    <p-button label="Добавить роль" icon="pi pi-plus" styleClass="p-button-success"
+                        (onClick)="onStartAddRoleDialog()"></p-button>
+                </div>
+            </ng-template>
+            <ng-template pTemplate="listItem" let-role>
+                <div class="col-12 flex align-items-center justify-content-between pr-3 pl-3">
+                    <div class="flex align-items-center">
+                        <p>Роль <span class="font-bold">{{role.name}}</span></p>
+                        <p-tag styleClass="ml-2" severity="info" value="Базовая"
+                            title="Назначается при создании профиля" *ngIf="role.isAssignedOnUserProfileCreation">
+                        </p-tag>
+                    </div>
+                    <div class="flex flex-wrap justify-content-end">
+                        <p-button label="Разрешения" styleClass="p-button-text" icon="pi pi-caret-down"
+                            (onClick)="permissionsOp.toggle($event)"></p-button>
+                        <p-button icon="pi pi-trash" styleClass="p-button-danger p-button-text"></p-button>
+                    </div>
+                </div>
+                <p-overlayPanel #permissionsOp (onShow)="loadPermissions(role.name)">
+                    <ng-template pTemplate>
+                        <div class="flex">
+                            <p-table #permissionRolesTable [value]="permissionItemsPerRole[role.name] ?? []"
+                                [scrollable]="true" scrollHeight="300px" dataKey="name"
+                                [globalFilterFields]="['permission']" [filterDelay]="0">
+                                <ng-template pTemplate="caption" class="p-1">
+                                    <div class="felx justify-content-between align-items-center">
+                                        <span class="p-input-icon-left mb-2 md:mb-0">
+                                            <i class="pi pi-search"></i>
+                                            <input type="text" placeholder="Поиск по имени" pInputText
+                                                (input)="onRolePermissionsSearchInput($event)">
+                                        </span>
+                                        <p-button icon="pi pi-pencil" styleClass="ml-2"></p-button>
+                                    </div>
+                                </ng-template>
+                                <ng-template pTemplate="body" let-item>
+                                    <tr>
+                                        <td class="p-1">{{item.permission}}</td>
+                                    </tr>
+                                </ng-template>
+                            </p-table>
+                        </div>
+                    </ng-template>
+                </p-overlayPanel>
+            </ng-template>
+        </p-dataView>
+    </p-card>
+    <p-dialog header="Добавление роли" [(visible)]="isAddRoleDialogDisplayed" [modal]="true" [draggable]="false"
+        [resizable]="false">
+        <form [formGroup]="addRoleForm">
+            <div class="field pt-4">
+                <span class="p-float-label">
+                    <input id="role-name" type="text" pInputText class="w-full" formControlName="name">
+                    <label for="role-name">Название</label>
+                </span>
+            </div>
+            <div class="field flex justify-content-between align-items-center">
+                <div>
+                    <label class="font-bold" for="role-is-basic">Базовая роль</label>
+                    <small id="role-is-basic-help" class="block">Назначается при создании профиля</small>
+                </div>
+                <p-inputSwitch id="role-is-basic" formControlName="isBasic"></p-inputSwitch>
+            </div>
+
+            <div class="field">
+                <h3>Разрешения</h3>
+                <p-message text="Добавьте хотя бы одно разрешение" severity="error" styleClass="w-full"
+                    *ngIf="pickedPermissionItems.length < 1"></p-message>
+                <p-pickList [source]="permissionItemPickPool" [target]="pickedPermissionItems" sourceHeader="Доступные"
+                    targetHeader="Выбранные" [responsive]="true" filterBy="permission" sourceFilterPlaceholder="Поиск"
+                    targetFilterPlaceholder="Поиск" [showSourceControls]="false" [showTargetControls]="false"
+                    styleClass="mt-2" [sourceStyle]="{'height':'15rem'}" [targetStyle]="{'height':'15rem'}">
+                    <ng-template let-item pTemplate="item">
+                        <span>{{item.permission}}</span>
+                    </ng-template>
+                </p-pickList>
+            </div>
+        </form>
+        <ng-template pTemplate="footer">
+            <p-button label="Отменить" styleClass="p-button-text" (onClick)="isAddRoleDialogDisplayed = false">
+            </p-button>
+            <p-button label="Создать роль" styleClass="p-button-success" [disabled]="!isAddRoleFormValid()"
+                (onClick)="onAddRoleFormSubmit()"></p-button>
+        </ng-template>
+    </p-dialog>
+</div>

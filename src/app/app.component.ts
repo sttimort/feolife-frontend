@@ -3,10 +3,8 @@ import { Component, OnInit } from '@angular/core';
 import { catchError, map, mergeMap, Observable } from 'rxjs';
 import { Store } from '@ngrx/store';
 import { AuthManagerService } from './service/auth-manager.service';
-import { MenuItem, PrimeNGConfig } from 'primeng/api';
-import { SignInFormSubmitEvent } from './components/sign-in-form/sign-in-form.component';
-import { UserProfileManager } from './service/user-profile-manager.service';
-import { FeolifeApiError, FeolifeApiErrorReason } from './service/feolife-api-client';
+import { MenuItem, PrimeIcons, PrimeNGConfig } from 'primeng/api';
+import { FeolifeApiError, FeolifeApiErrorReason } from './service/api/feolife-api-client';
 import { State } from './store/state';
 import { initialAuthServerFailure, startInitialAuthCheck } from './store/actions';
 
@@ -18,12 +16,6 @@ import { initialAuthServerFailure, startInitialAuthCheck } from './store/actions
 export class AppComponent implements OnInit {
   showWelcomeBox: Observable<boolean>
 
-  profileName: Observable<string>
-
-  menuItems: MenuItem[] = [
-    { label: 'Log out', icon: 'pi pi-sign-out', command: () => this.authManager.logout() },
-  ]
-
   showSpinner: boolean = false;
   showServerUnreachable: Observable<boolean>
 
@@ -33,9 +25,6 @@ export class AppComponent implements OnInit {
     private store: Store<{ state: State }>,
   ) {
     this.showWelcomeBox = this.store.select(it => it.state.isAuthenticated).pipe(map(it => it != true))
-    this.profileName = store.select(it => it.state.profile)
-      .pipe(map(profile => profile != null ? `${profile.firstName} ${profile.lastName}` : ''))
-
     this.showServerUnreachable = this.store.select(it => it.state.initialAuthServerFailure === true)
   }
 

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ExtensibleUserProfile, FeolifeApiClient } from 'src/app/service/feolife-api-client';
+import { ExtensibleUserProfile, FeolifeApiClient } from 'src/app/service/api/feolife-api-client';
 
 interface BillingAccountInfo {
   owner: string,

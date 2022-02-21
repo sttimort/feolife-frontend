@@ -30,6 +30,15 @@ import { MenuModule } from 'primeng/menu';
 import { FillUpsTookitComponent } from './components/fill-ups-tookit/fill-ups-tookit.component';
 import { DataViewModule } from 'primeng/dataview';
 import { InputNumberModule } from 'primeng/inputnumber';
+import { TagModule } from 'primeng/tag';
+import { OverlayPanelModule } from 'primeng/overlaypanel';
+import { TableModule } from 'primeng/table';
+import { DialogModule } from 'primeng/dialog';
+import { InputSwitchModule } from 'primeng/inputswitch';
+import { PickListModule } from 'primeng/picklist';
+
+import { RolesManagementComponent } from './components/roles-management/roles-management.component';
+import { MainMenuBarComponent } from './components/main-menu-bar/main-menu-bar.component';
 
 @NgModule({
   imports: [
@@ -54,6 +63,12 @@ import { InputNumberModule } from 'primeng/inputnumber';
     MenuModule,
     DataViewModule,
     InputNumberModule,
+    TagModule,
+    OverlayPanelModule,
+    TableModule,
+    DialogModule,
+    InputSwitchModule,
+    PickListModule,
   ],
   declarations: [
     AppComponent,
@@ -61,6 +76,8 @@ import { InputNumberModule } from 'primeng/inputnumber';
     HelloSidebarComponent,
     SignUpFormComponent,
     FillUpsTookitComponent,
+    RolesManagementComponent,
+    MainMenuBarComponent,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenAuthInterceptor, multi: true }
