@@ -45,6 +45,7 @@ export interface ResponseExtensionAttribute {
 }
 
 export interface Role {
+    uuid: string,
     name: string,
     isAssignedOnUserProfileCreation: boolean,
 }
@@ -161,6 +162,21 @@ export class FeolifeApiClient {
                 `${environment.apiUrl}/roles`,
                 request,
             )
+            .pipe(catchError(this.handleApiError()));
+    }
+
+    public setRolePermissions(roleUuid: string, permissions: Permission[]): Observable<void> {
+        return this.httpClient
+            .put<void>(
+                `${environment.apiUrl}/roles/${roleUuid}/permissions`,
+                { permissions: permissions },
+            )
+            .pipe(catchError(this.handleApiError()));
+    }
+
+    public deleteRole(roleUuid: string): Observable<void> {
+        return this.httpClient
+            .delete<void>(`${environment.apiUrl}/roles/${roleUuid}`)
             .pipe(catchError(this.handleApiError()));
     }
 

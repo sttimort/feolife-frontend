@@ -5,3 +5,7 @@ export interface CreateRoleRequest {
     isAssignedOnUserProfileCreation: Boolean,
     permissions: Permission[],
 }
+
+export interface SetRolePermissionsRequest {
+    permissions: Permission[],
+}

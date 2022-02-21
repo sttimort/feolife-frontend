@@ -36,9 +36,11 @@ import { TableModule } from 'primeng/table';
 import { DialogModule } from 'primeng/dialog';
 import { InputSwitchModule } from 'primeng/inputswitch';
 import { PickListModule } from 'primeng/picklist';
+import { ConfirmPopupModule } from 'primeng/confirmpopup';
 
 import { RolesManagementComponent } from './components/roles-management/roles-management.component';
 import { MainMenuBarComponent } from './components/main-menu-bar/main-menu-bar.component';
+import { HasPermissionDirective } from './directives/has-permission.directive';
 
 @NgModule({
   imports: [
@@ -69,6 +71,7 @@ import { MainMenuBarComponent } from './components/main-menu-bar/main-menu-bar.c
     DialogModule,
     InputSwitchModule,
     PickListModule,
+    ConfirmPopupModule,
   ],
   declarations: [
     AppComponent,
@@ -78,6 +81,7 @@ import { MainMenuBarComponent } from './components/main-menu-bar/main-menu-bar.c
     FillUpsTookitComponent,
     RolesManagementComponent,
     MainMenuBarComponent,
+    HasPermissionDirective,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenAuthInterceptor, multi: true }

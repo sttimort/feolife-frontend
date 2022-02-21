@@ -2,14 +2,16 @@ import { Component, Input, OnInit, ViewChild } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { DataView } from 'primeng/dataview';
 import { Table } from 'primeng/table';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { FeolifeApiClient, Role } from 'src/app/service/api/feolife-api-client';
 import { Permission } from 'src/app/store/state';
+import { ConfirmationService, PrimeIcons } from 'primeng/api';
 
 @Component({
   selector: 'app-roles-list',
-  templateUrl: './roles-list.component.html',
-  styleUrls: ['./roles-list.component.scss']
+  templateUrl: './roles-management.component.html',
+  styleUrls: ['./roles-list.component.scss'],
+  providers: [ConfirmationService],
 })
 export class RolesManagementComponent implements OnInit {
 
@@ -19,10 +21,12 @@ export class RolesManagementComponent implements OnInit {
   @ViewChild("permissionRolesTable")
   permissionsTableComponent!: Table;
 
-  roles: Observable<Role[]>
+  roles: Observable<Role[]> = of([]);
   permissionItemsPerRole: { [key: string]: PermissionItem[] | undefined } = {};
 
   isAddRoleDialogDisplayed: boolean = false;
+  isEditRolePermissionsDialogDisplayed: boolean = false;
+  editeeRole: Role | null = null;
 
   permissionItemPickPool: PermissionItem[] = [];
   pickedPermissionItems: PermissionItem[] = [];
@@ -36,16 +40,20 @@ export class RolesManagementComponent implements OnInit {
 
   constructor(
     private apiClient: FeolifeApiClient,
-  ) {
+    private confirmationService: ConfirmationService,
+  ) { }
+
+  ngOnInit(): void {
+    this.loadRoles()
+  }
+
+  loadRoles() {
     this.roles = this.apiClient.getRoles()
   }
 
-  ngOnInit(): void {
-  }
-
-  loadPermissions(roleName: string) {
-    this.apiClient.getRolePermissions(roleName).subscribe(permissions => {
-      this.permissionItemsPerRole[roleName] = permissions.map(it => ({ permission: it }));
+  loadPermissions(roleUuid: string) {
+    this.apiClient.getRolePermissions(roleUuid).subscribe(permissions => {
+      this.permissionItemsPerRole[roleUuid] = permissions.map(it => ({ permission: it }));
     })
   }
 
@@ -74,12 +82,49 @@ export class RolesManagementComponent implements OnInit {
         })
         .subscribe(() => {
           this.isAddRoleDialogDisplayed = false;
+          this.loadRoles();
         });
     }
   }
 
   isAddRoleFormValid(): boolean {
     return this.addRoleForm.valid && this.pickedPermissionItems.length > 0;
+  }
+
+  onStartEditRolePermissions(role: Role) {
+    this.editeeRole = role;
+    this.permissionItemPickPool = (<any>Object).values(Permission)
+      .filter((permission: Permission) => !this.permissionItemsPerRole[role.uuid]?.map(it => it.permission).includes(permission))
+      .map((it: Permission) => ({ permission: it }));
+
+    this.pickedPermissionItems = this.permissionItemsPerRole[role.uuid] ?? [];
+
+    this.isEditRolePermissionsDialogDisplayed = true;
+  }
+
+  onDeleteRole(event: Event, role: Role) {
+    this.confirmationService.confirm({
+      target: event.target ?? undefined,
+      message: `Вы точно хотите удалить роль "${role.name}"?`,
+      icon: PrimeIcons.EXCLAMATION_TRIANGLE,
+      accept: () => {
+        this.apiClient
+          .deleteRole(role.uuid)
+          .subscribe(() => { this.loadRoles(); });
+      },
+      acceptLabel: 'Удалить',
+      acceptButtonStyleClass: 'p-button-danger',
+      rejectLabel: 'Нет',
+    })
+
+  }
+
+  onSaveRolePermissions() {
+    if (this.editeeRole != null) {
+      this.apiClient
+        .setRolePermissions(this.editeeRole.uuid, this.pickedPermissionItems.map(it => it.permission))
+        .subscribe(() => { this.isEditRolePermissionsDialogDisplayed = false; });
+    }
   }
 
   private resetForm() {
