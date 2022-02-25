@@ -31,10 +31,16 @@ export class MainMenuBarComponent implements OnInit {
           icon: PrimeIcons.BAN,
           items: [
             {
-              label: 'Список ролей',
+              label: 'Управление ролями',
               icon: PrimeIcons.LIST,
               command: () => this.router.navigateByUrl('/roles'),
-              requiredPermission: Permission.LIST_ROLES,
+              requiredPermissions: [Permission.LIST_ROLES],
+            },
+            {
+              label: 'Назначение ролей',
+              icon: PrimeIcons.USER_EDIT,
+              command: () => this.router.navigateByUrl('/role-assignments'),
+              requiredPermissions: [Permission.LIST_ROLES, Permission.ASSIGN_ROLES],
             }
           ]
         }
@@ -48,7 +54,7 @@ export class MainMenuBarComponent implements OnInit {
           label: 'Пополнение счетов',
           icon: PrimeIcons.PLUS_CIRCLE,
           command: () => this.router.navigateByUrl('/fill-ups'),
-          requiredPermission: Permission.BILLING_ACCOUNT_FILL_UP,
+          requiredPermissions: [Permission.QUERY_BILLING_ACCOUNT, Permission.BILLING_ACCOUNT_FILL_UP],
         }
       ]
     },
@@ -87,7 +93,10 @@ export class MainMenuBarComponent implements OnInit {
       while (i < currentSourceItems.length || history.length > 0) {
         if (i < currentSourceItems.length) {
           const currentSourceItem = currentSourceItems[i++];
-          if (!currentSourceItem.requiredPermission || profile.permissions.includes(currentSourceItem.requiredPermission)) {
+          if (
+            !currentSourceItem.requiredPermissions ||
+            currentSourceItem.requiredPermissions.every(it => profile.permissions.includes(it))
+          ) {
             const newTargetItem = { ...currentSourceItem, items: currentSourceItem.items ? [] : undefined };
             currentTargetItems.push(newTargetItem);
             if (currentSourceItem.items && currentSourceItem.items.length > 0) {
@@ -128,6 +137,6 @@ export class MainMenuBarComponent implements OnInit {
 }
 
 interface MenuItemWithPermission extends MenuItem {
-  requiredPermission?: Permission,
+  requiredPermissions?: Permission[],
   items?: MenuItemWithPermission[]
 }

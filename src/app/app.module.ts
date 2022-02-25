@@ -41,6 +41,7 @@ import { ConfirmPopupModule } from 'primeng/confirmpopup';
 import { RolesManagementComponent } from './components/roles-management/roles-management.component';
 import { MainMenuBarComponent } from './components/main-menu-bar/main-menu-bar.component';
 import { HasPermissionDirective } from './directives/has-permission.directive';
+import { RoleAssignmentToolkitComponent } from './components/role-assignment-toolkit/role-assignment-toolkit.component';
 
 @NgModule({
   imports: [
@@ -82,6 +83,7 @@ import { HasPermissionDirective } from './directives/has-permission.directive';
     RolesManagementComponent,
     MainMenuBarComponent,
     HasPermissionDirective,
+    RoleAssignmentToolkitComponent,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenAuthInterceptor, multi: true }

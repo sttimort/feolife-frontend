@@ -19,12 +19,12 @@ export class HasPermissionGuard implements CanActivate {
     route: ActivatedRouteSnapshot,
     state: RouterStateSnapshot
   ): Observable<boolean | UrlTree> | Promise<boolean | UrlTree> | boolean | UrlTree {
-    const requiredPermission = route.data['requiredPermission'] as Permission
+    const requiredPermissions = route.data['requiredPermissions'] as Permission[]
     return iif(
-      () => requiredPermission ? true : false,
+      () => requiredPermissions ? true : false,
       this.store.select(it => it.state.profile?.permissions ?? []).pipe(
         map(permissions => {
-          const allowed = permissions.includes(requiredPermission);
+          const allowed = requiredPermissions.every(it => permissions.includes(it));
           if (!allowed) {
             this.authManager.onSuccessAuthRedirectTo(state.url);
           }

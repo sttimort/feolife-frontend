@@ -18,9 +18,13 @@ export interface CitizenSearchResponse {
 }
 
 export interface GetRolesResponse {
-    roles: Role[],
+    roles: { uuid: string, name: string, isAssignedOnUserProfileCreation: boolean }[],
 }
 
 export interface GetRolePermissionsResponse {
     permissions: Permission[],
+}
+
+export interface GetUserProfileRolesResponse {
+    roles: { uuid: string, name: string }[],
 }

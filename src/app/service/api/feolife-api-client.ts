@@ -4,7 +4,7 @@ import { catchError, concatMap, map, merge, Observable, of } from "rxjs";
 import { environment } from "src/environments/environment";
 import { MyUserProfile, Permission } from "../../store/state";
 import { CreateRoleRequest } from "./model/requests";
-import { CitizenSearchResponse, GetRolePermissionsResponse, GetRolesResponse, TokenAuthResponse, UserProfileResponse } from "./model/responses";
+import { CitizenSearchResponse, GetRolePermissionsResponse, GetRolesResponse, GetUserProfileRolesResponse, TokenAuthResponse, UserProfileResponse } from "./model/responses";
 
 export interface CreateUserProfileRequest {
     username: string,
@@ -177,6 +177,24 @@ export class FeolifeApiClient {
     public deleteRole(roleUuid: string): Observable<void> {
         return this.httpClient
             .delete<void>(`${environment.apiUrl}/roles/${roleUuid}`)
+            .pipe(catchError(this.handleApiError()));
+    }
+
+    public getUserProfileRoles(userProfileUuid: string): Observable<{ uuid: string, name: string }[]> {
+        return this.httpClient
+            .get<GetUserProfileRolesResponse>(`${environment.apiUrl}/user-profiles/${userProfileUuid}/roles`)
+            .pipe(
+                map(response => response.roles),
+                catchError(this.handleApiError()),
+            );
+    }
+
+    public assignRoles(userProfileUuid: string, roleUuids: string[]): Observable<void> {
+        return this.httpClient
+            .put<void>(
+                `${environment.apiUrl}/user-profiles/${userProfileUuid}/roles`,
+                { roleUuids: roleUuids },
+            )
             .pipe(catchError(this.handleApiError()));
     }
 
