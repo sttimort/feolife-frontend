@@ -42,6 +42,9 @@ import { RolesManagementComponent } from './components/roles-management/roles-ma
 import { MainMenuBarComponent } from './components/main-menu-bar/main-menu-bar.component';
 import { HasPermissionDirective } from './directives/has-permission.directive';
 import { RoleAssignmentToolkitComponent } from './components/role-assignment-toolkit/role-assignment-toolkit.component';
+import { SetPeasantComponent } from './components/set-peasant/set-peasant.component';
+import {CalendarModule} from 'primeng/calendar';
+import {InputTextareaModule} from 'primeng/inputtextarea';
 
 @NgModule({
   imports: [
@@ -52,7 +55,7 @@ import { RoleAssignmentToolkitComponent } from './components/role-assignment-too
     FormsModule,
     HttpClientModule,
     StoreModule.forRoot({ state: feolifeReducer }),
-
+   
     CardModule,
     ButtonModule,
     TabViewModule,
@@ -73,6 +76,8 @@ import { RoleAssignmentToolkitComponent } from './components/role-assignment-too
     InputSwitchModule,
     PickListModule,
     ConfirmPopupModule,
+    CalendarModule,
+    InputTextareaModule
   ],
   declarations: [
     AppComponent,
@@ -84,6 +89,7 @@ import { RoleAssignmentToolkitComponent } from './components/role-assignment-too
     MainMenuBarComponent,
     HasPermissionDirective,
     RoleAssignmentToolkitComponent,
+    SetPeasantComponent,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenAuthInterceptor, multi: true }

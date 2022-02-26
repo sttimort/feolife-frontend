@@ -9,3 +9,13 @@ export interface CreateRoleRequest {
 export interface SetRolePermissionsRequest {
     permissions: Permission[],
 }
+
+export interface createPeasantOwnershipClameRequest {
+    firstName: string,
+    middleName: string,
+    lastName: string,
+    bithDate: Date,
+    placeBirth: string,
+    owner: string
+    sex: string
+}

@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { catchError, concatMap, map, merge, Observable, of } from "rxjs";
 import { environment } from "src/environments/environment";
 import { MyUserProfile, Permission } from "../../store/state";
-import { CreateRoleRequest } from "./model/requests";
+import { createPeasantOwnershipClameRequest, CreateRoleRequest } from "./model/requests";
 import { CitizenSearchResponse, GetRolePermissionsResponse, GetRolesResponse, GetUserProfileRolesResponse, TokenAuthResponse, UserProfileResponse } from "./model/responses";
 
 export interface CreateUserProfileRequest {
@@ -125,8 +125,12 @@ export class FeolifeApiClient {
 
     public getBillingAccountByUserProfileUuid(userProfileUuid: string): Observable<ExtensibleBillingAccount> {
         return this.httpClient
-            .get<ExtensibleBillingAccount>(`${environment.apiUrl}/user-profiles/${userProfileUuid}/billing-account`)
+            .get<ExtensibleBillingAccount>(`${environment.apiUrl}/peasant-ownership-claims`)
             .pipe(catchError(this.handleApiError()));
+    }
+
+    public createPeasantOwnershipClame(object:createPeasantOwnershipClameRequest):Observable<void>{
+        return this.httpClient.post<void>("",object).pipe(catchError(this.handleApiError()));
     }
 
     public fillUpBillingAccount(billingAccountUuid: string, value: number): Observable<void> {
