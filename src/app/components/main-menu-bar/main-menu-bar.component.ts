@@ -65,18 +65,20 @@ export class MainMenuBarComponent implements OnInit {
       ]
     },
     {
-      label: 'Регистрация',
-      icon: PrimeIcons.USER_PLUS,
+      label: 'Крепостные',
+      icon: PrimeIcons.USERS,
       items: [
         {
-          label: 'Добавить крестьянина',
-          icon: PrimeIcons.PLUS_CIRCLE,
-          command: () => this.router.navigateByUrl('/peasant'),
-          //requiredPermissions: [Permission.QUERY_BILLING_ACCOUNT, Permission.BILLING_ACCOUNT_FILL_UP],
-        },
-        {
-          label: 'Добавить крестьянина',
-          icon: PrimeIcons.PLUS_CIRCLE,
+          label: 'Регистрация владения',
+          icon: PrimeIcons.USER_PLUS,
+          items: [
+            {
+              label: 'Создать заявку на регистрацию владения',
+              icon: PrimeIcons.PLUS_CIRCLE,
+              command: () => this.router.navigateByUrl('/peasant'),
+              requiredPermissions: [Permission.CREATE_PEASANT_OWNERSHIP_CLAIMS],
+            },
+          ],
           command: () => this.router.navigateByUrl('/my-peasant'),
           //requiredPermissions: [Permission.QUERY_BILLING_ACCOUNT, Permission.BILLING_ACCOUNT_FILL_UP],
         },

@@ -1,7 +1,6 @@
-import { EventEmitter,Component, OnInit, Output } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
-import { ExtensibleUserProfile, FeolifeApiClient } from 'src/app/service/api/feolife-api-client';
-
+import { PeasantOwnershipClaimService } from 'src/app/service/peasant-ownership-claim.service';
 
 @Component({
   selector: 'app-set-peasant',
@@ -11,49 +10,47 @@ import { ExtensibleUserProfile, FeolifeApiClient } from 'src/app/service/api/feo
 
 export class SetPeasantComponent implements OnInit {
 
-  private fistNameFromControl = new FormControl('', [
+  private peasantFistNameFromControl = new FormControl('', [
     Validators.required, Validators.maxLength(128)
   ]);
 
-  private secondNameFormControl = new FormControl('', [
-    Validators.maxLength(128)
-  ]);
-
-  private lastNameFormControl = new FormControl('', [
+  private peasantLastNameFormControl = new FormControl('', [
     Validators.required, Validators.maxLength(128)
   ]);
 
-  private bithDateFormControl = new FormControl('', [
-   
-  ]);
-
-  private sexFormControl = new FormControl('', [
-   
-  ]);
-
-  private placeBirthFormControl = new FormControl('', [
+  private peasantMiddleNameFormControl = new FormControl('', [
     Validators.maxLength(128)
   ]);
 
-  private ownerFormControl = new FormControl('', [
+  private peasantBithDateFormControl = new FormControl(null, []);
+
+  private peasantGenderFormControl = new FormControl('', []);
+
+  private peasantBirthPlaceFormControl = new FormControl('', [
     Validators.maxLength(128)
   ]);
+
+  private ownershipGroundsFormControl = new FormControl('', []);
 
   peasantForm = new FormGroup({
-    firstName: this.fistNameFromControl,
-    middleName: this.secondNameFormControl,
-    lastName: this.lastNameFormControl,
-    bithDate: this.bithDateFormControl,
-    placeBirth: this.placeBirthFormControl,
-    owner: this.ownerFormControl,
-    sex:this.sexFormControl
+    firstName: this.peasantFistNameFromControl,
+    middleName: this.peasantMiddleNameFormControl,
+    lastName: this.peasantLastNameFormControl,
+    bithDate: this.peasantBithDateFormControl,
+    placeBirth: this.peasantBirthPlaceFormControl,
+    owner: this.ownershipGroundsFormControl,
+    sex: this.peasantGenderFormControl
   });
 
+  constructor(
+    private peasantOwnershipClaimService: PeasantOwnershipClaimService,
+  ) { }
+
   showFirstNameInvalidMessage(): boolean {
-    return this.fistNameFromControl.dirty && this.fistNameFromControl.errors != null
+    return this.peasantFistNameFromControl.dirty && this.peasantFistNameFromControl.errors != null
   }
   showLastNameInvalidMessage(): boolean {
-    return this.lastNameFormControl.dirty && this.lastNameFormControl.errors != null
+    return this.peasantLastNameFormControl.dirty && this.peasantLastNameFormControl.errors != null
   }
 
   getNameErrorMessage(): string {
@@ -69,23 +66,34 @@ export class SetPeasantComponent implements OnInit {
       return '';
     }
   }
-  constructor(private apiClient: FeolifeApiClient,) { }
+
 
   ngOnInit(): void {
-   
+
   }
- 
+
   onSubmit() {
     if (this.peasantForm.valid) {
-      this.apiClient.createPeasantOwnershipClame({
-        firstName: this.fistNameFromControl.value,
-        middleName: this.secondNameFormControl.value,
-        lastName: this.lastNameFormControl.value,
-        bithDate: this.bithDateFormControl.value,
-        placeBirth: this.placeBirthFormControl.value,
-        owner: this.ownerFormControl.value,
-        sex:this.sexFormControl.value
-      }).subscribe();
+      console.log({
+        peasantFirstName: this.peasantFistNameFromControl.value,
+        peasantLastName: this.peasantLastNameFormControl.value,
+        peasantMiddleName: this.peasantMiddleNameFormControl.value,
+        peasantBithDate: this.peasantBithDateFormControl.value,
+        peasantGender: this.peasantGenderFormControl.value,
+        peasantBirthPlace: this.peasantBirthPlaceFormControl.value,
+        ownershipGrounds: this.ownershipGroundsFormControl.value,
+      })
+      this.peasantOwnershipClaimService
+        .initiatePeasantClaimCreation({
+          peasantFirstName: this.peasantFistNameFromControl.value,
+          peasantLastName: this.peasantLastNameFormControl.value,
+          peasantMiddleName: this.peasantMiddleNameFormControl.value,
+          peasantBirthDate: this.peasantBithDateFormControl.value,
+          peasantGender: this.peasantGenderFormControl.value,
+          peasantBirthPlace: this.peasantBirthPlaceFormControl.value,
+          ownershipGrounds: this.ownershipGroundsFormControl.value,
+        })
+        .subscribe()
     }
   }
 }

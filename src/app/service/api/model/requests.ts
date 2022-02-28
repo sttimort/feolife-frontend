@@ -10,19 +10,19 @@ export interface SetRolePermissionsRequest {
     permissions: Permission[],
 }
 
-export interface CreatePeasantOwnershipClameRequest {
-    firstName: string,
-    middleName: string,
-    lastName: string,
-    bithDate: Date,
-    placeBirth: string,
-    owner: string
-    sex: string
+export interface CreatePeasantOwnershipClaimRequest {
+    peasantFirstName: string,
+    peasantLastName: string,
+    peasantMiddleName: string | null,
+    peasantGender: string | null,
+    peasantBirthDate: Date | null,
+    peasantBirthPlace: string | null,
+    ownershipGrounds: string | null,
 }
-export interface Peasant extends  CreatePeasantOwnershipClameRequest{
-    id:string
+export interface Peasant extends CreatePeasantOwnershipClaimRequest {
+    id: string
 }
 
-export interface PeasantRequest extends  CreatePeasantOwnershipClameRequest{
-state:string
+export interface PeasantRequest extends CreatePeasantOwnershipClaimRequest {
+    state: string
 }

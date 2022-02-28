@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { catchError, concatMap, map, merge, Observable, of } from "rxjs";
 import { environment } from "src/environments/environment";
 import { MyUserProfile, Permission } from "../../store/state";
-import { CreatePeasantOwnershipClameRequest, CreateRoleRequest, Peasant, PeasantRequest } from "./model/requests";
+import { CreatePeasantOwnershipClaimRequest, CreateRoleRequest, Peasant, PeasantRequest } from "./model/requests";
 import { CitizenSearchResponse, GetRolePermissionsResponse, GetRolesResponse, GetUserProfileRolesResponse, TokenAuthResponse, UserProfileResponse } from "./model/responses";
 
 export interface CreateUserProfileRequest {
@@ -60,28 +60,29 @@ export class FeolifeApiClient {
     ) { }
 
 
-    public putToExchange(id:string): Observable<void>{
-        return   this.httpClient.get<void>( `${environment.apiUrl}/put-to-exchange`,{
-            params : {
-                id : id
-            }})
-        .pipe(
-            catchError(this.handleApiError())
-        );
+    public putToExchange(id: string): Observable<void> {
+        return this.httpClient.get<void>(`${environment.apiUrl}/put-to-exchange`, {
+            params: {
+                id: id
+            }
+        })
+            .pipe(
+                catchError(this.handleApiError())
+            );
     }
 
-    public getMyPeasants() : Observable<Peasant[]>{
-        return this.httpClient.get<Peasant[]>( `${environment.apiUrl}/my-request`
+    public getMyPeasants(): Observable<Peasant[]> {
+        return this.httpClient.get<Peasant[]>(`${environment.apiUrl}/my-request`
         )
-        .pipe(
-            catchError(this.handleApiError())
-        );
+            .pipe(
+                catchError(this.handleApiError())
+            );
     }
-    public getPeasantRequestSateList() : Observable<PeasantRequest[]>{
-        return this.httpClient.get<PeasantRequest[]>( `${environment.apiUrl}/peasant-request`)
-        .pipe(
-            catchError(this.handleApiError())
-        );
+    public getPeasantRequestSateList(): Observable<PeasantRequest[]> {
+        return this.httpClient.get<PeasantRequest[]>(`${environment.apiUrl}/peasant-request`)
+            .pipe(
+                catchError(this.handleApiError())
+            );
     }
 
     public authenticate(username: string, password: string): Observable<string> {
@@ -127,16 +128,16 @@ export class FeolifeApiClient {
             );
     }
 
-    public approvePeasant(id:string, type:string):Observable<void>{
+    public approvePeasant(id: string, type: string): Observable<void> {
         return this.httpClient
-        .post<any>(
-            `${environment.apiUrl}/approve-peasant`,
-            {
-                id:id,
-                type:type
-            },
-        )
-        .pipe(catchError(this.handleApiError()))
+            .post<any>(
+                `${environment.apiUrl}/approve-peasant`,
+                {
+                    id: id,
+                    type: type
+                },
+            )
+            .pipe(catchError(this.handleApiError()))
     }
     public createUserProfile(request: CreateUserProfileRequest): Observable<void> {
         return this.httpClient
@@ -147,12 +148,12 @@ export class FeolifeApiClient {
             .pipe(catchError(this.handleApiError()))
     }
 
-    public getActualPeasants():Observable<Peasant[]>{
+    public getActualPeasants(): Observable<Peasant[]> {
         return this.httpClient
-        .get<Peasant[]>(`${environment.apiUrl}/actual-peasants`)
-        .pipe(
-            catchError(this.handleApiError()),
-        )
+            .get<Peasant[]>(`${environment.apiUrl}/actual-peasants`)
+            .pipe(
+                catchError(this.handleApiError()),
+            )
     }
 
     public citizensSearch(query: string): Observable<ExtensibleUserProfile[]> {
@@ -168,12 +169,14 @@ export class FeolifeApiClient {
 
     public getBillingAccountByUserProfileUuid(userProfileUuid: string): Observable<ExtensibleBillingAccount> {
         return this.httpClient
-            .get<ExtensibleBillingAccount>(`${environment.apiUrl}/peasant-ownership-claims`)
+            .get<ExtensibleBillingAccount>(`${environment.apiUrl}/user-profiles/${userProfileUuid}/billing-account`)
             .pipe(catchError(this.handleApiError()));
     }
 
-    public createPeasantOwnershipClame(object:CreatePeasantOwnershipClameRequest):Observable<void>{
-        return this.httpClient.post<void>("",object).pipe(catchError(this.handleApiError()));
+    public createPeasantOwnershipClaim(request: CreatePeasantOwnershipClaimRequest): Observable<void> {
+        return this.httpClient
+            .post<void>(`${environment.apiUrl}/peasant-ownership-claims`, request)
+            .pipe(catchError(this.handleApiError()))
     }
 
     public fillUpBillingAccount(billingAccountUuid: string, value: number): Observable<void> {

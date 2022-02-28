@@ -29,7 +29,19 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit(): void {
-    this.primeNgConfig.ripple = true;
+    this.primeNgConfig.ripple = true
+    this.primeNgConfig.setTranslation({
+      dayNames: ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"],
+      dayNamesShort: ["Воск", "Понед", "Втор", "Сред", "Четв", "Пятн", "Субб"],
+      dayNamesMin: ["Вс", "Пн", "Вт", "Ср", "Чт", "Пт", "Сб"],
+      monthNames: [
+        "Январь", "Февраль", "Март", "Апрель", "Май", "Июнь", "Июль", "Август",
+        "Сентябрь", "Октбярь", "Ноябрь", "Декабрь"
+      ],
+      monthNamesShort: ["Янв", "Фев", "Март", "Апр", "Май", "Июнь", "Июль", "Авг", "Сен", "Окт", "Ноя", "Дек"],
+      firstDayOfWeek: 1,
+      dateFormat: 'dd.mm.yy',
+    })
     this.checkAuth();
   }
 
