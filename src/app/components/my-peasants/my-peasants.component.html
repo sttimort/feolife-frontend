@@ -1,1 +1,22 @@
-<p>my-peasants works!</p>
+<div class="grid p-4">
+    <div class="md:col-6 col-12 md:col-offset-3">
+        <p-card header="Регистрация крестьянина">
+            <p-dataView [value]="peasantList" layout="list" emptyMessage="Нет новых крестьян">
+                <ng-template let-peasant pTemplate="listItem">
+                    <div class="col-12  justify-content-between">
+                        <div class=>
+                            <p class="ml-2 font-bold">
+                                {{peasant.lastName}} {{peasant.firstName}} {{peasant.middleName ?? ''}}
+                            </p>
+                        </div>
+                        <div class=" mt-4 flex justify-content-end">
+                            <p-button label="Выставить" styleClass="p-button-success" (onClick)="buttonClick(peasant.id)"></p-button>
+                        </div>
+
+                    </div>
+                </ng-template>
+            </p-dataView>
+
+        </p-card>
+    </div>
+</div>

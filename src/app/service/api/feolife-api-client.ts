@@ -59,6 +59,24 @@ export class FeolifeApiClient {
         private httpClient: HttpClient
     ) { }
 
+
+    public putToExchange(id:string): Observable<void>{
+        return   this.httpClient.get<void>( `${environment.apiUrl}/put-to-exchange`,{
+            params : {
+                id : id
+            }})
+        .pipe(
+            catchError(this.handleApiError())
+        );
+    }
+
+    public getMyPeasants() : Observable<Peasant[]>{
+        return this.httpClient.get<Peasant[]>( `${environment.apiUrl}/my-request`
+        )
+        .pipe(
+            catchError(this.handleApiError())
+        );
+    }
     public getPeasantRequestSateList() : Observable<PeasantRequest[]>{
         return this.httpClient.get<PeasantRequest[]>( `${environment.apiUrl}/peasant-request`)
         .pipe(

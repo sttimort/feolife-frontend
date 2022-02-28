@@ -3,6 +3,7 @@ import { RouterModule, Routes } from '@angular/router';
 import { CheckRequestsComponent } from './components/check-requests/check-requests.component';
 
 import { FillUpsTookitComponent } from './components/fill-ups-tookit/fill-ups-tookit.component';
+import { MyPeasantsComponent } from './components/my-peasants/my-peasants.component';
 import { PeasantApproveComponent } from './components/peasant-approve/peasant-approve.component';
 import { RoleAssignmentToolkitComponent } from './components/role-assignment-toolkit/role-assignment-toolkit.component';
 import { RolesManagementComponent } from './components/roles-management/roles-management.component';
@@ -44,6 +45,12 @@ const routes: Routes = [
   {
     path: 'check-peasant-request',
     component: CheckRequestsComponent,
+    data: { requiredPermissions: [Permission.LIST_ROLES, Permission.ASSIGN_ROLES] },
+   // canActivate: [HasPermissionGuard],
+  },
+  {
+    path: 'my-peasant',
+    component: MyPeasantsComponent,
     data: { requiredPermissions: [Permission.LIST_ROLES, Permission.ASSIGN_ROLES] },
    // canActivate: [HasPermissionGuard],
   }
