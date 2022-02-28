@@ -47,6 +47,7 @@ import {CalendarModule} from 'primeng/calendar';
 import {InputTextareaModule} from 'primeng/inputtextarea';
 import { PeasantApproveComponent } from './components/peasant-approve/peasant-approve.component';
 import { CheckRequestsComponent } from './components/check-requests/check-requests.component';
+import { MyPeasantsComponent } from './components/my-peasants/my-peasants.component';
 
 @NgModule({
   imports: [
@@ -94,6 +95,7 @@ import { CheckRequestsComponent } from './components/check-requests/check-reques
     SetPeasantComponent,
     PeasantApproveComponent,
     CheckRequestsComponent,
+    MyPeasantsComponent,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenAuthInterceptor, multi: true }
