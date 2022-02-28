@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+import { CheckRequestsComponent } from './components/check-requests/check-requests.component';
 
 import { FillUpsTookitComponent } from './components/fill-ups-tookit/fill-ups-tookit.component';
 import { PeasantApproveComponent } from './components/peasant-approve/peasant-approve.component';
@@ -37,6 +38,12 @@ const routes: Routes = [
   {
     path: 'peasant-approve',
     component: PeasantApproveComponent,
+    data: { requiredPermissions: [Permission.LIST_ROLES, Permission.ASSIGN_ROLES] },
+   // canActivate: [HasPermissionGuard],
+  },
+  {
+    path: 'check-peasant-request',
+    component: CheckRequestsComponent,
     data: { requiredPermissions: [Permission.LIST_ROLES, Permission.ASSIGN_ROLES] },
    // canActivate: [HasPermissionGuard],
   }

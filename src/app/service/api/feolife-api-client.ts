@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { catchError, concatMap, map, merge, Observable, of } from "rxjs";
 import { environment } from "src/environments/environment";
 import { MyUserProfile, Permission } from "../../store/state";
-import { CreatePeasantOwnershipClameRequest, CreateRoleRequest, Peasant } from "./model/requests";
+import { CreatePeasantOwnershipClameRequest, CreateRoleRequest, Peasant, PeasantRequest } from "./model/requests";
 import { CitizenSearchResponse, GetRolePermissionsResponse, GetRolesResponse, GetUserProfileRolesResponse, TokenAuthResponse, UserProfileResponse } from "./model/responses";
 
 export interface CreateUserProfileRequest {
@@ -58,6 +58,13 @@ export class FeolifeApiClient {
     constructor(
         private httpClient: HttpClient
     ) { }
+
+    public getPeasantRequestSateList() : Observable<PeasantRequest[]>{
+        return this.httpClient.get<PeasantRequest[]>( `${environment.apiUrl}/peasant-request`)
+        .pipe(
+            catchError(this.handleApiError())
+        );
+    }
 
     public authenticate(username: string, password: string): Observable<string> {
         return this.httpClient

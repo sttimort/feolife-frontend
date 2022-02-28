@@ -22,3 +22,7 @@ export interface CreatePeasantOwnershipClameRequest {
 export interface Peasant extends  CreatePeasantOwnershipClameRequest{
     id:string
 }
+
+export interface PeasantRequest extends  CreatePeasantOwnershipClameRequest{
+state:string
+}
