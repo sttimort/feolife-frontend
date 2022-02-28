@@ -45,6 +45,7 @@ import { RoleAssignmentToolkitComponent } from './components/role-assignment-too
 import { SetPeasantComponent } from './components/set-peasant/set-peasant.component';
 import {CalendarModule} from 'primeng/calendar';
 import {InputTextareaModule} from 'primeng/inputtextarea';
+import { PeasantApproveComponent } from './components/peasant-approve/peasant-approve.component';
 
 @NgModule({
   imports: [
@@ -90,6 +91,7 @@ import {InputTextareaModule} from 'primeng/inputtextarea';
     HasPermissionDirective,
     RoleAssignmentToolkitComponent,
     SetPeasantComponent,
+    PeasantApproveComponent,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenAuthInterceptor, multi: true }

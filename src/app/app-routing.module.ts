@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { FillUpsTookitComponent } from './components/fill-ups-tookit/fill-ups-tookit.component';
+import { PeasantApproveComponent } from './components/peasant-approve/peasant-approve.component';
 import { RoleAssignmentToolkitComponent } from './components/role-assignment-toolkit/role-assignment-toolkit.component';
 import { RolesManagementComponent } from './components/roles-management/roles-management.component';
 import { SetPeasantComponent } from './components/set-peasant/set-peasant.component';
@@ -32,6 +33,12 @@ const routes: Routes = [
     component: RoleAssignmentToolkitComponent,
     data: { requiredPermissions: [Permission.LIST_ROLES, Permission.ASSIGN_ROLES] },
     canActivate: [HasPermissionGuard],
+  },
+  {
+    path: 'peasant-approve',
+    component: PeasantApproveComponent,
+    data: { requiredPermissions: [Permission.LIST_ROLES, Permission.ASSIGN_ROLES] },
+   // canActivate: [HasPermissionGuard],
   }
 ];
 

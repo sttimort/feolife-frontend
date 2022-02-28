@@ -10,7 +10,7 @@ export interface SetRolePermissionsRequest {
     permissions: Permission[],
 }
 
-export interface createPeasantOwnershipClameRequest {
+export interface CreatePeasantOwnershipClameRequest {
     firstName: string,
     middleName: string,
     lastName: string,
@@ -18,4 +18,7 @@ export interface createPeasantOwnershipClameRequest {
     placeBirth: string,
     owner: string
     sex: string
+}
+export interface Peasant extends  CreatePeasantOwnershipClameRequest{
+    id:string
 }

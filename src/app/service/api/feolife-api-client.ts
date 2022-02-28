@@ -3,7 +3,7 @@ import { Injectable } from "@angular/core";
 import { catchError, concatMap, map, merge, Observable, of } from "rxjs";
 import { environment } from "src/environments/environment";
 import { MyUserProfile, Permission } from "../../store/state";
-import { createPeasantOwnershipClameRequest, CreateRoleRequest } from "./model/requests";
+import { CreatePeasantOwnershipClameRequest, CreateRoleRequest, Peasant } from "./model/requests";
 import { CitizenSearchResponse, GetRolePermissionsResponse, GetRolesResponse, GetUserProfileRolesResponse, TokenAuthResponse, UserProfileResponse } from "./model/responses";
 
 export interface CreateUserProfileRequest {
@@ -102,6 +102,17 @@ export class FeolifeApiClient {
             );
     }
 
+    public approvePeasant(id:string, type:string):Observable<void>{
+        return this.httpClient
+        .post<any>(
+            `${environment.apiUrl}/approve-peasant`,
+            {
+                id:id,
+                type:type
+            },
+        )
+        .pipe(catchError(this.handleApiError()))
+    }
     public createUserProfile(request: CreateUserProfileRequest): Observable<void> {
         return this.httpClient
             .post<any>(
@@ -111,6 +122,13 @@ export class FeolifeApiClient {
             .pipe(catchError(this.handleApiError()))
     }
 
+    public getActualPeasants():Observable<Peasant[]>{
+        return this.httpClient
+        .get<Peasant[]>(`${environment.apiUrl}/actual-peasants`)
+        .pipe(
+            catchError(this.handleApiError()),
+        )
+    }
 
     public citizensSearch(query: string): Observable<ExtensibleUserProfile[]> {
         return this.httpClient
@@ -129,7 +147,7 @@ export class FeolifeApiClient {
             .pipe(catchError(this.handleApiError()));
     }
 
-    public createPeasantOwnershipClame(object:createPeasantOwnershipClameRequest):Observable<void>{
+    public createPeasantOwnershipClame(object:CreatePeasantOwnershipClameRequest):Observable<void>{
         return this.httpClient.post<void>("",object).pipe(catchError(this.handleApiError()));
     }
 

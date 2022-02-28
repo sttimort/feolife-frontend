@@ -67,6 +67,12 @@ export class MainMenuBarComponent implements OnInit {
           icon: PrimeIcons.PLUS_CIRCLE,
           command: () => this.router.navigateByUrl('/peasant'),
           //requiredPermissions: [Permission.QUERY_BILLING_ACCOUNT, Permission.BILLING_ACCOUNT_FILL_UP],
+        },
+        {
+          label: 'Добавить крестьянина',
+          icon: PrimeIcons.PLUS_CIRCLE,
+          command: () => this.router.navigateByUrl('/peasant-approve'),
+          //requiredPermissions: [Permission.QUERY_BILLING_ACCOUNT, Permission.BILLING_ACCOUNT_FILL_UP],
         }
       ]
     },
