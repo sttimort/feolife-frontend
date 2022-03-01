@@ -3,8 +3,7 @@
         <button pButton pRipple type="button" label="ФеоЛайф" class="p-button-text" routerLink="/"></button>
     </ng-template>
     <ng-template pTemplate="end">
-        <button pButton pRipple type="button" icon="pi pi-user" [label]="(profileName | async) ?? ''"
-            class="p-button-text" (click)="menu.toggle($event)"></button>
+        <button id="name-button" pButton pRipple type="button" icon="pi pi-user" [label]="(profileName | async) ?? ''" class="p-button-text" (click)="menu.toggle($event)"></button>
         <p-menu #menu [popup]="true" [model]="profileMenuItems"></p-menu>
     </ng-template>
 </p-menubar>

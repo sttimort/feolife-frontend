@@ -10,6 +10,6 @@
         <small class="p-error" *ngIf="showPasswordInvalidMessage()">{{getPasswordErrorMessage()}}</small>
     </span>
     <div class="mt-4">
-        <p-button label="Войти" type="submit" [disabled]="loginForm.invalid" styleClass="fl-button-wide"></p-button>
+        <p-button id="sign-in-button" label="Войти" type="submit" [disabled]="loginForm.invalid" styleClass="fl-button-wide"></p-button>
     </div>
 </form>

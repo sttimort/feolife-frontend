@@ -1,15 +1,15 @@
 <form [formGroup]="signupForm" (submit)="onSubmit()">
     <p-fieldset legend="Данные входа в учетную запись">
-        <span class="p-float-label mt-2">
-            <input id="username" type="text" pInputText formControlName="username">
-            <label for="username">Имя пользователя</label>
+        <span id="span-username" class="p-float-label mt-2">
+            <input id="username-input" type="text" pInputText formControlName="username">
+            <label for="username-input">Имя пользователя</label>
         </span>
         <small class="p-error" *ngIf="showInvalidMessage(usernameFormControl)">
             {{getErrorMessage(usernameFormControl, 'Username')}}
         </small>
         <span class="p-float-label mt-4">
-            <input id="password" type="password" pInputText formControlName="password">
-            <label for="password">Пароль</label>
+            <input id="password-input" type="password" pInputText formControlName="password">
+            <label for="password-input">Пароль</label>
         </span>
         <small class="p-error" *ngIf="showInvalidMessage(passwordFormControl)">
             {{getErrorMessage(passwordFormControl, 'Password')}}
@@ -39,6 +39,6 @@
         </small>
     </p-fieldset>
     <div class="mt-4">
-        <p-button label="Создать профиль" type="submit" styleClass="fl-button-wide" [disabled]="signupForm.invalid"></p-button>
+        <p-button id="sign-up-button" label="Создать профиль" type="submit" styleClass="fl-button-wide" [disabled]="signupForm.invalid"></p-button>
     </div>
 </form>
