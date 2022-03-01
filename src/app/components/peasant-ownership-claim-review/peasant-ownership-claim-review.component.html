@@ -1,0 +1,113 @@
+<div class="p-component md:p-4">
+    <h1 class="md:mr-0 md:ml-0 mr-4 ml-4">Рассмотрение заявки на регистрацию владения крепостным</h1>
+    <div class="grid md:p-4">
+        <div class="xl:col-6 col-12">
+            <p-card header="Информация о заявке" *ngIf="claim != null">
+                <div>
+                    <div class="field grid">
+                        <label class="xl:col-2 md:col-3 col-12 font-bold">UUID</label>
+                        <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">{{claim.uuid}}</span>
+                    </div>
+                    <div class="field grid">
+                        <label class="xl:col-2 md:col-3 col-12 font-bold">Статус</label>
+                        <p-tag [severity]="getSeverityForClaimStatus(claim.status)"
+                            class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                            {{claim.status}}
+                        </p-tag>
+                    </div>
+                    <div class="field grid" *ngIf="claim.reviewer != null">
+                        <label class="xl:col-2 md:col-3 col-12 font-bold">Рассмативающий сотрудник</label>
+                        <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                            {{claim.reviewer.lastName}} {{claim.reviewer.firstName}}
+                            {{claim.reviewer.middleName ?? '' }}
+                        </span>
+                    </div>
+                    <div class="field grid">
+                        <label class="xl:col-2 md:col-3 col-12 font-bold">Дата подачи заявки</label>
+                        <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                            {{claim.creationInstant | date:'dd.MM.yyyy hh:mm'}}
+                        </span>
+                    </div>
+                    <div class="field grid">
+                        <label class="xl:col-2 md:col-3 col-12 font-bold">Дата последнего обновления</label>
+                        <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                            {{claim.creationInstant | date:'dd.MM.yyyy hh:mm'}}
+                        </span>
+                    </div>
+                    <div class="field grid">
+                        <label class="xl:col-2 md:col-3 col-12 font-bold">Заявитель</label>
+                        <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                            {{claim.claimer.lastName}} {{claim.claimer.firstName}}
+                            {{claim.claimer.middleName ?? '' }}
+                        </span>
+                    </div>
+                    <p-fieldset legend="Крестьянин" styleClass="mb-4">
+                        <div class="field grid">
+                            <label class="xl:col-2 md:col-4 col-12 font-bold">ФИО</label>
+                            <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                                {{claim.peasant.lastName}} {{claim.peasant.firstName}}
+                                {{claim.peasant.middleName ?? '' }}
+                            </span>
+                        </div>
+                        <div class="field grid">
+                            <label class="xl:col-2 md:col-4 col-12 font-bold">Гендер</label>
+                            <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                                {{claim.peasant.gender ?? 'Не указана'}}
+                            </span>
+                        </div>
+                        <div class="field grid">
+                            <label class="xl:col-2 md:col-4 col-12 font-bold">Дата рождения</label>
+                            <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                                {{(claim.peasant.birthDate | date:'dd.MM.yyyy' ) ?? 'Не указана'}}
+                            </span>
+                        </div>
+                        <div class="field grid">
+                            <label class="xl:col-2 md:col-4 col-12 font-bold">Место рождения</label>
+                            <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                                {{claim.peasant.birthPlace ?? 'Не указана'}}
+                            </span>
+                        </div>
+                    </p-fieldset>
+                    <div class="field grid">
+                        <label class="xl:col-2 md:col-3 col-12 font-bold">Основания владения</label>
+                        <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                            {{claim.ownershipGrounds ?? 'Не указаны'}}
+                        </span>
+                    </div>
+                    <p-fieldset legend="Решение" *ngIf="isClaimResolved(claim.status)">
+                        <div class="field grid">
+                            <label class="xl:col-2 md:col-3 col-12 font-bold">Сотрудник</label>
+                            <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                                {{claim.reviewer!.lastName}} {{claim.reviewer!.firstName}}
+                                {{claim.reviewer!.middleName ?? '' }}
+                            </span>
+                        </div>
+                        <div class="field grid">
+                            <label class="xl:col-2 md:col-3 col-12 font-bold">Текст</label>
+                            <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                                {{claim.resolutionComment}}
+                            </span>
+                        </div>
+                    </p-fieldset>
+                </div>
+            </p-card>
+        </div>
+        <div class="xl:col-6 col-12">
+            <p-card header="Вынесение решения" *ngIf="claim != null">
+                <form [formGroup]="resolutionForm">
+                    <div class="field grid">
+                        <label class="md:col-3 col-12 font-bold">Комментарий *</label>
+                        <textarea rows="10" cols="50" pInputTextarea formControlName="resolutionComment"></textarea>
+                    </div>
+                    <div class="flex justify-content-end align-items-center" *ngIf="canMakeResolution() | async">
+                        <p-button type="submit" label="Отказать" styleClass="p-button-danger"
+                            (onClick)="onRejectClicked()" [disabled]="resolutionForm.invalid"></p-button>
+                        <p-button type="submit" label="Одобрить" styleClass="p-button-success ml-2"
+                            (onClick)="onApproveClicked()" [disabled]="resolutionForm.invalid"></p-button>
+                    </div>
+                </form>
+            </p-card>
+        </div>
+        <p-confirmDialog [style]="{width: '50vw'}" rejectButtonStyleClass="p-button-outlined"></p-confirmDialog>
+    </div>
+</div>

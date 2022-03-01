@@ -43,11 +43,14 @@ import { MainMenuBarComponent } from './components/main-menu-bar/main-menu-bar.c
 import { HasPermissionDirective } from './directives/has-permission.directive';
 import { RoleAssignmentToolkitComponent } from './components/role-assignment-toolkit/role-assignment-toolkit.component';
 import { SetPeasantComponent } from './components/set-peasant/set-peasant.component';
-import {CalendarModule} from 'primeng/calendar';
-import {InputTextareaModule} from 'primeng/inputtextarea';
-import { PeasantApproveComponent } from './components/peasant-approve/peasant-approve.component';
+import { CalendarModule } from 'primeng/calendar';
+import { InputTextareaModule } from 'primeng/inputtextarea';
+import { PeasantOwnershipClaimsComponent } from './components/peasant-ownership-claims/peasant-ownership-claims.component';
 import { CheckRequestsComponent } from './components/check-requests/check-requests.component';
 import { MyPeasantsComponent } from './components/my-peasants/my-peasants.component';
+import { DropdownModule } from 'primeng/dropdown';
+import { PeasantOwnershipClaimReviewComponent } from './components/peasant-ownership-claim-review/peasant-ownership-claim-review.component';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 
 @NgModule({
   imports: [
@@ -58,7 +61,7 @@ import { MyPeasantsComponent } from './components/my-peasants/my-peasants.compon
     FormsModule,
     HttpClientModule,
     StoreModule.forRoot({ state: feolifeReducer }),
-   
+
     CardModule,
     ButtonModule,
     TabViewModule,
@@ -80,7 +83,9 @@ import { MyPeasantsComponent } from './components/my-peasants/my-peasants.compon
     PickListModule,
     ConfirmPopupModule,
     CalendarModule,
-    InputTextareaModule
+    InputTextareaModule,
+    DropdownModule,
+    ConfirmDialogModule,
   ],
   declarations: [
     AppComponent,
@@ -93,9 +98,10 @@ import { MyPeasantsComponent } from './components/my-peasants/my-peasants.compon
     HasPermissionDirective,
     RoleAssignmentToolkitComponent,
     SetPeasantComponent,
-    PeasantApproveComponent,
+    PeasantOwnershipClaimsComponent,
     CheckRequestsComponent,
     MyPeasantsComponent,
+    PeasantOwnershipClaimReviewComponent,
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: TokenAuthInterceptor, multi: true }

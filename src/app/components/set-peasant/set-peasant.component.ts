@@ -74,20 +74,13 @@ export class SetPeasantComponent implements OnInit {
 
   onSubmit() {
     if (this.peasantForm.valid) {
-      console.log({
-        peasantFirstName: this.peasantFistNameFromControl.value,
-        peasantLastName: this.peasantLastNameFormControl.value,
-        peasantMiddleName: this.peasantMiddleNameFormControl.value,
-        peasantBithDate: this.peasantBithDateFormControl.value,
-        peasantGender: this.peasantGenderFormControl.value,
-        peasantBirthPlace: this.peasantBirthPlaceFormControl.value,
-        ownershipGrounds: this.ownershipGroundsFormControl.value,
-      })
       this.peasantOwnershipClaimService
         .initiatePeasantClaimCreation({
           peasantFirstName: this.peasantFistNameFromControl.value,
           peasantLastName: this.peasantLastNameFormControl.value,
-          peasantMiddleName: this.peasantMiddleNameFormControl.value,
+          peasantMiddleName: this.peasantMiddleNameFormControl.value?.length > 0
+            ? this.peasantMiddleNameFormControl.value
+            : null,
           peasantBirthDate: this.peasantBithDateFormControl.value,
           peasantGender: this.peasantGenderFormControl.value,
           peasantBirthPlace: this.peasantBirthPlaceFormControl.value,

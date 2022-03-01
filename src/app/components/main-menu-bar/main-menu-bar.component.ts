@@ -78,6 +78,12 @@ export class MainMenuBarComponent implements OnInit {
               command: () => this.router.navigateByUrl('/peasant'),
               requiredPermissions: [Permission.CREATE_PEASANT_OWNERSHIP_CLAIMS],
             },
+            {
+              label: 'Рассмотрение заявок на регистрацию владения',
+              icon: PrimeIcons.CHECK,
+              command: () => this.router.navigateByUrl('/peasant-ownership-claims'),
+              requiredPermissions: [Permission.LIST_PEASANT_OWNERSHIP_CLAIMS, Permission.REVIEW_PEASANT_OWNERSHIP_CLAIMS],
+            },
           ],
           command: () => this.router.navigateByUrl('/my-peasant'),
           //requiredPermissions: [Permission.QUERY_BILLING_ACCOUNT, Permission.BILLING_ACCOUNT_FILL_UP],

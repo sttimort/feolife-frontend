@@ -1,0 +1,147 @@
+<div class="p-component md:p-4">
+    <h1 class="md:mr-0 md:ml-0 mr-4 ml-4">Заявки на регистрацию владения</h1>
+    <div class="grid md:p-4">
+        <div class="xl:col-10 xl:col-offset-1 col-12">
+            <p-card>
+                <p-dataView #claimsDataView [value]="claims" layout="list" emptyMessage="Заявки не найдены"
+                    [paginator]="true" [rows]="10" [lazy]="true" (onLazyLoad)="onLazyLoad($event)"
+                    [totalRecords]="claimsTotal" [rowsPerPageOptions]="[10, 20, 50]">
+                    <ng-template pTemplate="header">
+                        <div>
+                            <label for="claim-status" class="mr-3">Статус</label>
+                            <p-dropdown id="claim-status" [options]="claimStatusOptions"
+                                [(ngModel)]="selectedClaimStatus" (onChange)="onSelectedCLaimStatusChange()"
+                                [style]="{ 'width': '13rem' }"></p-dropdown>
+                        </div>
+                    </ng-template>
+                    <ng-template let-claim pTemplate="listItem">
+                        <div class="p-2 pb-4 col-12 grid">
+                            <div class="lg:col-8 col-12 grid">
+                                <label class="xl:col-2 md:col-3 col-12 font-bold">UUID</label>
+                                <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">{{claim.uuid}}</span>
+
+                                <label class="xl:col-2 md:col-3 col-12 font-bold">Статус</label>
+                                <p-tag [severity]="getSeverityForClaimStatus(claim.status)"
+                                    class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                                    {{claim.status}}
+                                </p-tag>
+
+                                <label class="xl:col-2 md:col-3 col-12 font-bold">Заявитель</label>
+                                <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                                    {{claim.claimer.lastName}} {{claim.claimer.firstName}}
+                                    {{claim.claimer.middleName ?? '' }}
+                                </span>
+
+                                <label class="xl:col-2 md:col-3 col-12 font-bold">Крестьянин</label>
+                                <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                                    {{buildPeasantDescription(claim.peasant)}}
+                                </span>
+                            </div>
+                            <div class="lg:col-4 col-12 flex align-items-center justify-content-end">
+                                <p-button label="Рассмотреть" *ngIf="canStartReview(claim.status)"
+                                    (onClick)="onStartReview($event, claim)">
+                                </p-button>
+                                <p-button label="К&nbsp;рассмотрению" *ngIf="canContinueReview(claim) | async"
+                                    (onClick)="onContinuteReview(claim)"></p-button>
+                                <p-button icon="pi pi-window-maximize" (onClick)="onShowFullInfo(claim)" class="ml-2">
+                                </p-button>
+                            </div>
+                        </div>
+                    </ng-template>
+                </p-dataView>
+            </p-card>
+        </div>
+    </div>
+    <p-dialog header="Заявка на регистрацию владения крепостным" [(visible)]="isFullClaimInfoDialogVisible"
+        [modal]="true" [draggable]="false" [resizable]="false" [closable]="true">
+        <div *ngIf="selectedClaim != null">
+            <div class="field grid">
+                <label class="xl:col-2 md:col-3 col-12 font-bold">UUID</label>
+                <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">{{selectedClaim.uuid}}</span>
+            </div>
+            <div class="field grid">
+                <label class="xl:col-2 md:col-3 col-12 font-bold">Статус</label>
+                <p-tag [severity]="getSeverityForClaimStatus(selectedClaim.status)"
+                    class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                    {{selectedClaim.status}}
+                </p-tag>
+            </div>
+            <div class="field grid">
+                <label class="xl:col-2 md:col-3 col-12 font-bold">Дата подачи заявки</label>
+                <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                    {{selectedClaim.creationInstant | date:'dd.MM.yyyy hh:mm'}}
+                </span>
+            </div>
+            <div class="field grid">
+                <label class="xl:col-2 md:col-3 col-12 font-bold">Дата последнего обновления</label>
+                <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                    {{selectedClaim.creationInstant | date:'dd.MM.yyyy hh:mm'}}
+                </span>
+            </div>
+            <div class="field grid">
+                <label class="xl:col-2 md:col-3 col-12 font-bold">Заявитель</label>
+                <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                    {{selectedClaim.claimer.lastName}} {{selectedClaim.claimer.firstName}}
+                    {{selectedClaim.claimer.middleName ?? '' }}
+                </span>
+            </div>
+            <p-fieldset legend="Крестьянин" styleClass="mb-4">
+                <div class="field grid">
+                    <label class="xl:col-2 md:col-4 col-12 font-bold">ФИО</label>
+                    <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                        {{selectedClaim.peasant.lastName}} {{selectedClaim.peasant.firstName}}
+                        {{selectedClaim.peasant.middleName ?? '' }}
+                    </span>
+                </div>
+                <div class="field grid">
+                    <label class="xl:col-2 md:col-4 col-12 font-bold">Гендер</label>
+                    <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                        {{selectedClaim.peasant.gender ?? 'Не указана'}}
+                    </span>
+                </div>
+                <div class="field grid">
+                    <label class="xl:col-2 md:col-4 col-12 font-bold">Дата рождения</label>
+                    <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                        {{(selectedClaim.peasant.birthDate | date:'dd.MM.yyyy' ) ?? 'Не указана'}}
+                    </span>
+                </div>
+                <div class="field grid">
+                    <label class="xl:col-2 md:col-4 col-12 font-bold">Место рождения</label>
+                    <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                        {{selectedClaim.peasant.birthPlace ?? 'Не указана'}}
+                    </span>
+                </div>
+            </p-fieldset>
+            <div class="field grid">
+                <label class="xl:col-2 md:col-3 col-12 font-bold">Основания владения</label>
+                <span class="xl:col-10 md:col-9 md:ml-0 col-12 ml-3">
+                    {{selectedClaim.ownershipGrounds ?? 'Не указаны'}}
+                </span>
+            </div>
+            <p-fieldset legend="Решение" *ngIf="isClaimResolved(selectedClaim.status)">
+                <div class="field grid">
+                    <label class="xl:col-2 md:col-3 col-12 font-bold">Сотрудник</label>
+                    <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                        {{selectedClaim.reviewer!.lastName}} {{selectedClaim.reviewer!.firstName}}
+                        {{selectedClaim.reviewer!.middleName ?? '' }}
+                    </span>
+                </div>
+                <div class="field grid">
+                    <label class="xl:col-2 md:col-3 col-12 font-bold">Текст</label>
+                    <span class="xl:col-10 md:col-8 md:ml-0 col-12 ml-3">
+                        {{selectedClaim.resolutionComment}}
+                    </span>
+                </div>
+            </p-fieldset>
+        </div>
+        <ng-template pTemplate="footer">
+            <p-button label="Закрыть" styleClass="p-button-text" (onClick)="isFullClaimInfoDialogVisible=false">
+            </p-button>
+            <p-button label="Начать рассмотрение" *ngIf="canStartReview(selectedClaim!.status)"
+                (onClick)="onStartReview($event, selectedClaim!)"></p-button>
+            <p-button label="К&nbsp;рассмотрению" *ngIf="canContinueReview(selectedClaim!) | async"
+                (onClick)="onContinuteReview(selectedClaim!)"></p-button>
+        </ng-template>
+    </p-dialog>
+    <p-confirmPopup></p-confirmPopup>
+</div>

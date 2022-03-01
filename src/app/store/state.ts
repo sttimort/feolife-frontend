@@ -6,6 +6,7 @@ export interface State {
 }
 
 export interface MyUserProfile {
+    uuid: string,
     username: string,
     firstName: string,
     lastName: string,
@@ -26,6 +27,7 @@ export enum Permission {
     CHANGE_ROLE_PERMISSIONS = 'CHANGE_ROLE_PERMISSIONS',
 
     // peasant ownership claims
+    QUERY_PEASANT_OWNERSHIP_CLAIM = 'QUERY_PEASANT_OWNERSHIP_CLAIM',
     LIST_PEASANT_OWNERSHIP_CLAIMS = 'LIST_PEASANT_OWNERSHIP_CLAIMS',
     CREATE_PEASANT_OWNERSHIP_CLAIMS = 'CREATE_PEASANT_OWNERSHIP_CLAIMS',
     REVIEW_PEASANT_OWNERSHIP_CLAIMS = 'REVIEW_PEASANT_OWNERSHIP_CLAIMS',

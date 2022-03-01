@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { PeasantApproveComponent } from './peasant-approve.component';
+import { PeasantOwnershipClaimsComponent } from './peasant-ownership-claims.component';
 
 describe('PeasantApproveComponent', () => {
-  let component: PeasantApproveComponent;
-  let fixture: ComponentFixture<PeasantApproveComponent>;
+  let component: PeasantOwnershipClaimsComponent;
+  let fixture: ComponentFixture<PeasantOwnershipClaimsComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ PeasantApproveComponent ]
+      declarations: [ PeasantOwnershipClaimsComponent ]
     })
     .compileComponents();
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(PeasantApproveComponent);
+    fixture = TestBed.createComponent(PeasantOwnershipClaimsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

@@ -1,10 +1,11 @@
 import { HttpClient, HttpErrorResponse, HttpHeaders } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { catchError, concatMap, map, merge, Observable, of } from "rxjs";
+import { catchError, concatMap, map, merge, Observable, of, zip } from "rxjs";
 import { environment } from "src/environments/environment";
 import { MyUserProfile, Permission } from "../../store/state";
+import { PeasantOwnershipClaim, PeasantOwnershipClaimStatus } from "./model/api-models";
 import { CreatePeasantOwnershipClaimRequest, CreateRoleRequest, Peasant, PeasantRequest } from "./model/requests";
-import { CitizenSearchResponse, GetRolePermissionsResponse, GetRolesResponse, GetUserProfileRolesResponse, TokenAuthResponse, UserProfileResponse } from "./model/responses";
+import { CitizenSearchResponse, GetPeasantOwnershipClaimResponse, GetPeasantOwnershipClaimsResponse, GetRolePermissionsResponse, GetRolesResponse, GetUserProfileRolesResponse, TokenAuthResponse, UserProfileResponse } from "./model/responses";
 
 export interface CreateUserProfileRequest {
     username: string,
@@ -85,6 +86,8 @@ export class FeolifeApiClient {
             );
     }
 
+    // *** authentication and registration ***
+
     public authenticate(username: string, password: string): Observable<string> {
         return this.httpClient
             .post<TokenAuthResponse>(
@@ -112,11 +115,24 @@ export class FeolifeApiClient {
 
     }
 
+    public createUserProfile(request: CreateUserProfileRequest): Observable<void> {
+        return this.httpClient
+            .post<any>(
+                `${environment.apiUrl}/username-password-profiles`,
+                request,
+            )
+            .pipe(catchError(this.handleApiError()))
+    }
+
+
+    // *** my ***
+
     public getMyUserProfile(): Observable<MyUserProfile> {
         return this.httpClient
             .get<UserProfileResponse>(`${environment.apiUrl}/my-user-profile`)
             .pipe(
                 map(response => ({
+                    uuid: response.uuid,
                     username: response.credentials[0].username,
                     firstName: response.firstName,
                     lastName: response.lastName,
@@ -128,33 +144,6 @@ export class FeolifeApiClient {
             );
     }
 
-    public approvePeasant(id: string, type: string): Observable<void> {
-        return this.httpClient
-            .post<any>(
-                `${environment.apiUrl}/approve-peasant`,
-                {
-                    id: id,
-                    type: type
-                },
-            )
-            .pipe(catchError(this.handleApiError()))
-    }
-    public createUserProfile(request: CreateUserProfileRequest): Observable<void> {
-        return this.httpClient
-            .post<any>(
-                `${environment.apiUrl}/username-password-profiles`,
-                request,
-            )
-            .pipe(catchError(this.handleApiError()))
-    }
-
-    public getActualPeasants(): Observable<Peasant[]> {
-        return this.httpClient
-            .get<Peasant[]>(`${environment.apiUrl}/actual-peasants`)
-            .pipe(
-                catchError(this.handleApiError()),
-            )
-    }
 
     public citizensSearch(query: string): Observable<ExtensibleUserProfile[]> {
         return this.httpClient
@@ -167,16 +156,25 @@ export class FeolifeApiClient {
             )
     }
 
+
+    public approvePeasant(id: string, type: string): Observable<void> {
+        return this.httpClient
+            .post<any>(
+                `${environment.apiUrl}/approve-peasant`,
+                {
+                    id: id,
+                    type: type
+                },
+            )
+            .pipe(catchError(this.handleApiError()))
+    }
+
+    // *** billing accounts ***
+
     public getBillingAccountByUserProfileUuid(userProfileUuid: string): Observable<ExtensibleBillingAccount> {
         return this.httpClient
             .get<ExtensibleBillingAccount>(`${environment.apiUrl}/user-profiles/${userProfileUuid}/billing-account`)
             .pipe(catchError(this.handleApiError()));
-    }
-
-    public createPeasantOwnershipClaim(request: CreatePeasantOwnershipClaimRequest): Observable<void> {
-        return this.httpClient
-            .post<void>(`${environment.apiUrl}/peasant-ownership-claims`, request)
-            .pipe(catchError(this.handleApiError()))
     }
 
     public fillUpBillingAccount(billingAccountUuid: string, value: number): Observable<void> {
@@ -187,6 +185,108 @@ export class FeolifeApiClient {
             )
             .pipe(catchError(this.handleApiError()));
     }
+
+
+    // *** peasant ownership claims ***
+
+    public getPeasantOwnershipClaim(claimUuid: string): Observable<PeasantOwnershipClaim> {
+        return this.httpClient
+            .get<GetPeasantOwnershipClaimResponse>(`${environment.apiUrl}/peasant-ownership-claims/${claimUuid}`)
+            .pipe(
+                map(response => ({
+                    ...response,
+                    peasant: {
+                        ...response.peasant,
+                        birthDate: response.peasant.birthDate != null ? new Date(Date.parse(response.peasant.birthDate)) : null,
+                    },
+                    creationInstant: new Date(Date.parse(response.creationInstant)),
+                    modificationInstant: new Date(Date.parse(response.modificationInstant)),
+                })),
+                catchError(this.handleApiError()),
+            )
+    }
+
+    public getPeasantOwnershipClaims(
+        filter: {
+            claimStatus: PeasantOwnershipClaimStatus | null,
+            start: number | null,
+            size: number | null,
+        }
+    ): Observable<{ claims: PeasantOwnershipClaim[], totalCount: number }> {
+        const params: { [param: string]: string | number | boolean | ReadonlyArray<string | number | boolean> } = {}
+        if (filter.claimStatus != null) {
+            params['status'] = PeasantOwnershipClaimStatus[filter.claimStatus]
+        }
+        if (filter.start != null) {
+            params['start'] = filter.start
+        }
+        if (filter.size != null) {
+            params['size'] = filter.size
+        }
+
+        return this.httpClient
+            .get<GetPeasantOwnershipClaimsResponse>(
+                `${environment.apiUrl}/peasant-ownership-claims`,
+                { params: params, },
+            )
+            .pipe(
+                map(response => {
+                    return {
+                        claims: response.claims.map(it => {
+                            return {
+                                uuid: it.uuid,
+                                claimer: it.claimer,
+                                peasant: {
+                                    ...it.peasant,
+                                    birthDate: it.peasant.birthDate != null ? new Date(Date.parse(it.peasant.birthDate)) : null,
+                                },
+                                ownershipGrounds: it.ownershipGrounds,
+                                status: it.status,
+                                reviewer: it.reviewer,
+                                resolutionComment: it.resolutionComment,
+                                creationInstant: new Date(Date.parse(it.creationInstant)),
+                                modificationInstant: new Date(Date.parse(it.modificationInstant)),
+                            }
+                        }),
+                        totalCount: response.totalCount,
+                    }
+                }),
+                catchError(this.handleApiError()),
+            )
+    }
+
+    public createPeasantOwnershipClaim(request: CreatePeasantOwnershipClaimRequest): Observable<void> {
+        return this.httpClient
+            .post<void>(`${environment.apiUrl}/peasant-ownership-claims`, request)
+            .pipe(catchError(this.handleApiError()))
+    }
+
+    public startPeasantOwnershipCLaimReview(claimUuid: string): Observable<void> {
+        return this.httpClient
+            .post<void>(`${environment.apiUrl}/peasant-ownership-claims/${claimUuid}/review`, null)
+            .pipe(catchError(this.handleApiError()))
+    }
+
+    public approvePeasantOwnershipClaim(claimUuid: string, comment: string): Observable<void> {
+        return this.httpClient
+            .post<void>(
+                `${environment.apiUrl}/peasant-ownership-claims/${claimUuid}/approvals`,
+                { resolutionComment: comment }
+            )
+            .pipe(catchError(this.handleApiError()))
+    }
+
+    public rejectPeasantOwnershipClaim(claimUuid: string, comment: string): Observable<void> {
+        return this.httpClient
+            .post<void>(
+                `${environment.apiUrl}/peasant-ownership-claims/${claimUuid}/rejections`,
+                { resolutionComment: comment }
+            )
+            .pipe(catchError(this.handleApiError()))
+    }
+
+
+    // *** roles ***
 
     public getRoles(): Observable<Role[]> {
         return this.httpClient
